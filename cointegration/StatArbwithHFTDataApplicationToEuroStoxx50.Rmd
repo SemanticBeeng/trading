@@ -70,7 +70,7 @@ If indeed the daily data is enough then may choose to use free daily data from e
     + If data is obtained from different vendors then ensure it is consistent across the various frequencies.
 
 
-TODO: show data plots
+
 
 ***
 ## Paper Summary
