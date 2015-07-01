@@ -3,9 +3,9 @@ title: "Statistical Arbitrage and High-Frequency Data with an Application to Eur
 author: Nick Vintila
 date: July 1st, 2015
 output:
-  html_document:
+  pdf_document:
     toc: true
-    theme: united
+    
 ---
 
 ## Data Summary
