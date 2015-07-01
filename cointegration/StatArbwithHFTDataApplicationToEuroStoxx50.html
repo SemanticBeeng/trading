@@ -93,6 +93,32 @@ img {
 <li>Not clear if the authors use actual bid/ask spreads or not : on one hand they say “we do not dispose of bid and ask prices” and on the other, they use “minute data” (the tickdata.com definition of “minute data” may not contain bid/asks but just trades only)</li>
 </ul>
 </div>
+<div id="tactical-purchase-of-data" class="section level4">
+<h4>Tactical purchase of data</h4>
+<ul>
+<li>the high cost of the data</li>
+<li>the above unknowns</li>
+<li>the fact that the rationale above is not yet verified by Brian</li>
+</ul>
+<p>I chose to acquire part of the data for now and acquire more later if indeed Brian considers the approach valid and the potential worthwhile.</p>
+<p>If indeed the daily data is enough then may choose to use free daily data from elsewhere.</p>
+</div>
+<div id="overview-of-data-collection-approach" class="section level4">
+<h4>Overview of data collection approach</h4>
+<ul>
+<li>Compare current EURO STOXX 50 index composition and compare with the composition at the time the paper was written</li>
+<li>Document differences in index composition</li>
+<li>Decide the selection of stocks to obtain in order to make paper replication as faithful as possible</li>
+<li>Locate the data (daily and intraday/minute) for the stocks to use</li>
+<li>Ensure stock is properly identified using Quant Finance and stoxx.com (disambiguate between different symbols used by different exchanges; ended up using ISIN numbers)</li>
+<li>Check which historical data providers : tickdata.com, quantquote.com, quantgo.com, eoddata.com.</li>
+<li>Download and verify data
+<ul>
+<li>If stock data is obtained from different vendors or from different exchanges then convert to EUR (how (question))</li>
+<li>If data is obtained from different vendors then ensure it is consistent across the various frequencies.</li>
+</ul></li>
+</ul>
+</div>
 </div>
 </div>
 <div id="paper-summary" class="section level2">

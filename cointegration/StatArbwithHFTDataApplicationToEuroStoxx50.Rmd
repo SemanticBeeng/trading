@@ -39,6 +39,28 @@ In terms of provider I chose TickData.com because they provide tools to convert 
  * Currency: different stocks might be priced in currencies different than EUR : must check individually
  * Not clear if the authors use actual bid/ask spreads or not : on one hand they say "we do not dispose of bid and ask prices" and on the other, they use "minute data" (the tickdata.com definition of "minute data" may not contain bid/asks but just trades only)
 
+#### Tactical purchase of data
+
+ * the high cost of the data
+ * the above unknowns
+ * the fact that the rationale above is not yet verified by Brian
+ 
+I chose to acquire part of the data for now and acquire more later if indeed Brian considers the approach valid and the potential worthwhile.
+
+If indeed the daily data is enough then may choose to use free daily data from elsewhere.
+
+#### Overview of data collection approach
+
+ * Compare current EURO STOXX 50 index composition and compare with the composition at the time the paper was written
+ * Document differences in index composition
+ * Decide the selection of stocks to obtain in order to make paper replication as faithful as possible
+ * Locate the data (daily and intraday/minute) for the stocks to use 
+ * Ensure stock is properly identified using Quant Finance and stoxx.com (disambiguate between different symbols used by different exchanges; ended up using ISIN numbers)
+ * Check which historical data providers : tickdata.com, quantquote.com, quantgo.com, eoddata.com.
+ * Download and verify data
+    + If stock data is obtained from different vendors or from different exchanges then convert to EUR (how (question))
+    + If data is obtained from different vendors then ensure it is consistent across the various frequencies.
+
 
 ## Paper Summary
 
