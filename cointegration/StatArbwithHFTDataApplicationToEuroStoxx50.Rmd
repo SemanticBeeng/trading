@@ -1,0 +1,74 @@
+---
+title: "Statistical Arbitrage and High-Frequency Data with an Application to Eurostoxx 50 Equities"
+author: Nick Vintila
+date: July 1st, 2015
+output: html_document
+---
+
+## Data Summary
+
+## Paper Summary
+
+### Introduction
+
+* The extent to which a pair of stocks in EuroStoxx 50 is cointegrated at daily frequencies is a good indicator for profitability at higher frequencies if the pair is selected by a combination of criteria involving cointegration.
+
+* using high-frequency data leads to higher potentially achievable information ratio compared to the use of daily closing prices
+
+Issue: implies causality but only shows "association".
+
+### Main techniques
+
+1. Group stocks in the Eurostoxx 50 index in industry groups
+Q: How to reproduce the groups?
+
+2. Within each industry group create pairs of stocks
+Q: Does it matter how pairs are made or create all the combinations?
+
+3. For each pair calculate time adaptive/varying betas using Kalman filters
+
+Note: OLS (ordinary least squares) and DESP (double exponential smoothing prediction) are dropped in favor of Kalman filters.
+
+4. Trade the following strategy : 
+- enter both positions when spread > 2 standard deviations
+- exit both positions when spread returned < 0.5 standard deviations of long term mean
+
+*Key finding*
+Results are not attractive
+
+5. Calculate the information ratio of the series (what frequency?)
+
+6. Obtain the t-stat of the ADF test of the series sample at daily interval 
+
+7. Build a diversified portfolio of 5 pairs with the best indicator value
+
+*Key finding*
+An indicator made from a combination of the two above (?) produces information ratios of
+
+- over 3 for high frequencies 
+- 1.3 for daily frequency
+
+Compares favorably with the performance of Eurostoxx 50 index and the index of Market Neutral Hedge Funds.
+
+8. Calculate the cointegration of pairs using Engle and Granger (chosen vs. the Johansen test due to simplicity and lower variance)
+
+...?
+
+9. Test for a positive correlation between the t-stat of the ADF test on the OLS residuals and the out of sample "information ratio" (uses bootstrap); test is a PCA on a normalized matrix of t-stats from the ADF test for 176 pairs x (5, 10, 20, 30, 60) frequencies
+
+*Key finding*
+In sample t-stat at 5min and 10 min frequencies have certain predictive power for the out of sample information ratio.
+
+The first principal component explains 97% of the variation in the data.
+
+10. Use the 2 above indicators to select a subset of 5 pairs
+
+
+### Issues
+
+"For daily data, the in-sample period is much longer than the out-of-sample period." 
+Too little out of sample data.
+
+"For high-frequency data the in- and out-of-sample periods have the same lengths"
+Data is split just in two sets. Needs more sophisticated cross validation, k-fold validation, etc.
+
