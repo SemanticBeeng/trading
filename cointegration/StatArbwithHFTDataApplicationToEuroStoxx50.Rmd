@@ -23,7 +23,7 @@ The authors used the intraday data as 'out of sample' and the daily for "in samp
 
 ***
 
-#### As obtained by me
+### As obtained by me
 
 From studying the paper it was quite clear that
  * there is too little data for "out of sample"" verification (1 to 10 ratio)
@@ -40,13 +40,13 @@ For the same reason, included "ESSILOR INTERNATIONAL" even though it was not use
 In terms of provider I chose TickData.com because they provide tools to convert data for corporate actions (but also because QuantGo.com did not offer access in time).
 
 ***
-#### Potential issues
+### Potential issues
 
  * Currency: different stocks might be priced in currencies different than EUR : must check individually
  * Not clear if the authors use actual bid/ask spreads or not : on one hand they say "we do not dispose of bid and ask prices" and on the other, they use "minute data" (the tickdata.com definition of "minute data" may not contain bid/asks but just trades only)
 
 ***
-#### Tactical purchase of data
+### Tactical purchase of data
 
  * the high cost of the data
  * the above unknowns
@@ -57,7 +57,7 @@ I chose to acquire part of the data for now and acquire more later if indeed Bri
 If indeed the daily data is enough then may choose to use free daily data from elsewhere.
 
 ***
-#### Overview of data collection approach
+### Overview of data collection approach
 
  * Compare current EURO STOXX 50 index composition and compare with the composition at the time the paper was written
  * Document differences in index composition
@@ -70,13 +70,7 @@ If indeed the daily data is enough then may choose to use free daily data from e
     + If data is obtained from different vendors then ensure it is consistent across the various frequencies.
 
 
-```{r}
-library(ggplot2)
-summary(cars)
-
-qplot(speed, dist, data = cars) + geom_smooth()
-```
-
+TODO: show data plots
 
 ***
 ## Paper Summary
