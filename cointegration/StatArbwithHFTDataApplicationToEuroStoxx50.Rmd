@@ -2,7 +2,10 @@
 title: "Statistical Arbitrage and High-Frequency Data with an Application to Eurostoxx 50 Equities"
 author: Nick Vintila
 date: July 1st, 2015
-output: html_document
+output:
+  html_document:
+    toc: true
+    theme: united
 ---
 
 ## Data Summary
@@ -17,6 +20,8 @@ The authors used Euro Stoxx 50 data at both daily and intraday frequencies
 Data was adjusted for dividend payments and splits.
 
 The authors used the intraday data as 'out of sample' and the daily for "in sample".
+
+***
 
 #### As obtained by me
 
@@ -34,11 +39,13 @@ For the same reason, included "ESSILOR INTERNATIONAL" even though it was not use
 
 In terms of provider I chose TickData.com because they provide tools to convert data for corporate actions (but also because QuantGo.com did not offer access in time).
 
+***
 #### Potential issues
 
  * Currency: different stocks might be priced in currencies different than EUR : must check individually
  * Not clear if the authors use actual bid/ask spreads or not : on one hand they say "we do not dispose of bid and ask prices" and on the other, they use "minute data" (the tickdata.com definition of "minute data" may not contain bid/asks but just trades only)
 
+***
 #### Tactical purchase of data
 
  * the high cost of the data
@@ -49,6 +56,7 @@ I chose to acquire part of the data for now and acquire more later if indeed Bri
 
 If indeed the daily data is enough then may choose to use free daily data from elsewhere.
 
+***
 #### Overview of data collection approach
 
  * Compare current EURO STOXX 50 index composition and compare with the composition at the time the paper was written
@@ -62,6 +70,15 @@ If indeed the daily data is enough then may choose to use free daily data from e
     + If data is obtained from different vendors then ensure it is consistent across the various frequencies.
 
 
+```{r}
+library(ggplot2)
+summary(cars)
+
+qplot(speed, dist, data = cars) + geom_smooth()
+```
+
+
+***
 ## Paper Summary
 
 ### Introduction
@@ -72,6 +89,7 @@ If indeed the daily data is enough then may choose to use free daily data from e
 
 Issue: implies causality but only shows "association".
 
+***
 ### Main techniques
 
 1. Group stocks in the Eurostoxx 50 index in industry groups
@@ -118,8 +136,8 @@ The first principal component explains 97% of the variation in the data.
 
 10. Use the 2 above indicators to select a subset of 5 pairs
 
-
-### Issues
+***
+### Issues and possible improvements
 
 "For daily data, the in-sample period is much longer than the out-of-sample period." 
 Too little out of sample data.
