@@ -7,6 +7,39 @@ output: html_document
 
 ## Data Summary
 
+### As used in paper
+
+The authors used Euro Stoxx 50 data at both daily and intraday frequencies
+
+ * Daily for from 01 Jan 2000 to 17 Nov 2009
+ * Intraday from 03 Jul 2009 03-07-2009 to 17 Nov 2009 at 5 min, 10 min, 20 min, 30 min, 60 min frequencies
+ 
+Data was adjusted for dividend payments and splits.
+
+The authors used the intraday data as 'out of sample' and the daily for "in sample".
+
+#### As obtained by me
+
+From studying the paper it was quite clear that
+ * there is too little data for "out of sample"" verification (1 to 10 ratio)
+ * there is an opportunity to further improve the strategy by checking the real demand at the time the signals are triggered (bid/ask, volume, and, in the long run, the limit order book)
+
+As such, I decided to get
+ * minute data for all 50 stocks for 10 years 
+ * trades and quotes data for 1-2 years for the 6 pairs of stocks the PCA analysis will select to be accounting for 97% of the variance.
+
+I also excluded "UNIBAIL-RODAMCO" since it is the only one in it's category so it cannot form a pair as per the paper approach.
+
+For the same reason, included "ESSILOR INTERNATIONAL" even though it was not used by the authors (but it is currently in the index).
+
+In terms of provider I chose TickData.com because they provide tools to convert data for corporate actions (but also because QuantGo.com did not offer access in time).
+
+#### Potential issues
+
+ * Currency: different stocks might be priced in currencies different than EUR : must check individually
+ * Not clear if the authors use actual bid/ask spreads or not : on one hand they say "we do not dispose of bid and ask prices" and on the other, they use "minute data" (the tickdata.com definition of "minute data" may not contain bid/asks but just trades only)
+
+
 ## Paper Summary
 
 ### Introduction
