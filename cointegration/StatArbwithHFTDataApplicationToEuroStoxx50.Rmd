@@ -77,17 +77,16 @@ If indeed the daily data is enough then may choose to use free daily data from e
 
 ### Introduction
 
-  Agrue for the presence of arbitrage profitiability is a selection of EuroStoxx 50 equities when using a novel approach combining cointegration at HFT and daily leves, time adaptable beta and a test to pairs that account for most of the variability in the set of stocks.
+  Agrue for the presence of arbitrage profitiability in a selection of EuroStoxx 50 equities when using a novel approach combining cointegration at HFT and daily leves, time adaptable beta and a test to select pairs that account for most of the variability in the set of stocks.
 
-###& Main points
+#### Main points
 
  * Pairs grouped by industry sector are sometimes cointegrated and can be traded with pair-trading strategies
  * Using a Kalmnan filter to determine a time adaptable beta is superior to using OLS or DESP
- * The simple strategy does not have attractive results.
- * Using sampling frequencies higher than daily offer investment characteristics more attractive then when using daily data 
+ * Using sampling frequencies higher than daily for cointegration tests offers investment characteristics that are more attractive then when using daily data 
  * Using PCA to subselect pairs which account for most of the variablility improves returns
 
-###& Conclusion 
+#### Conclusion 
 
   Statistical arbitrage at daily frequencies in EuroStoxx 50 is not attractive but testing cointegration at high frequencies, using a time adaptive beta and filerting stocks with maximum  variability makes strategies attractive.
   
@@ -95,49 +94,52 @@ If indeed the daily data is enough then may choose to use free daily data from e
 ***
 ### Main techniques
 
-1. Group stocks in the Eurostoxx 50 index in industry groups
-Q: How to reproduce the groups?
 
-2. Within each industry group create pairs of stocks
-Q: Does it matter how pairs are made or create all the combinations?
+1. Group stocks in the Eurostoxx 50 index by industry groups. 
+Within each industry group create pairs of stocks
 
-3. For each pair calculate time adaptive/varying betas using Kalman filters
+2. For each pair calculate time adaptive/varying betas using Kalman filters
 
 Note: OLS (ordinary least squares) and DESP (double exponential smoothing prediction) are dropped in favor of Kalman filters.
 
-4. Trade the following strategy : 
+3. The traditional simple strategy : 
 - enter both positions when spread > 2 standard deviations
 - exit both positions when spread returned < 0.5 standard deviations of long term mean
 
 *Key finding*
 Results are not attractive
 
-5. Calculate the information ratio of the series (what frequency?)
+4. Calculate the information ratio of the series 
 
-6. Obtain the t-stat of the ADF test of the series sample at daily interval 
+$$ Annualized Information Ratio = (R / \sigma) \sqrt{Hours traded per day * 252}  $$
 
-7. Build a diversified portfolio of 5 pairs with the best indicator value
+5. Obtain the t-stat of the ADF test of the series sampled at daily interval 
+
+6. Build a diversified portfolio of 5 pairs with the best indicator value
 
 *Key finding*
-An indicator made from a combination of the two above (?) produces information ratios of
+An indicator made from a combination of the two above produces information ratios of
 
 - over 3 for high frequencies 
 - 1.3 for daily frequency
 
 Compares favorably with the performance of Eurostoxx 50 index and the index of Market Neutral Hedge Funds.
 
-8. Calculate the cointegration of pairs using Engle and Granger (chosen vs. the Johansen test due to simplicity and lower variance)
+7. Calculate the cointegration of pairs using Engle and Granger (chosen vs. the Johansen test due to simplicity and lower variance)
 
-...?
+$$ T_{t} = \beta X_{t} + \epsilon_{t} $$
 
-9. Test for a positive correlation between the t-stat of the ADF test on the OLS residuals and the out of sample "information ratio" (uses bootstrap); test is a PCA on a normalized matrix of t-stats from the ADF test for 176 pairs x (5, 10, 20, 30, 60) frequencies
+8. Test the hypothesis of positive correlation between the t-stat of the ADF test on the OLS residuals and the out of sample "information ratio" (uses bootstrap); the test is a PCA on a normalized matrix of t-stats from the ADF test for 176 pairs x (5, 10, 20, 30, 60) frequencies
 
 *Key finding*
 In sample t-stat at 5min and 10 min frequencies have certain predictive power for the out of sample information ratio.
 
-The first principal component explains 97% of the variation in the data.
+The first principal component explains 97% of the variation in the data for the overall set of pairs in the index.
 
-10. Use the 2 above indicators to select a subset of 5 pairs
+9. Use the above indicators to select a subset of 5 pairs and trade the enhanced strategy
+
+*Key finding*
+The extra indicators heavily improved the attractiveness of the results for the pairs sampled at the high-frequency intervals.
 
 ***
 ### Issues and possible improvements
@@ -152,6 +154,21 @@ The HFT data used in the paper spans 4 monts for Summer and Fall. This makes the
 A solution would be to test with larger out of sample HFT data and seek patterns of seasonality. ("seasonal version of the Ornstein-Uhlenbeck formula": https://www.evernote.com/shard/s175/nl/19543423/4ad339f8-c347-43a4-a9c5-04bedd77c3e8)
 Addionallity, add a momentum component to the strategy to go around the assumption of mean reversion.
 
+### Misc Formulae
 
+##### Spread
 
+$$ z_{t} = P_{Y_{t}} - \beta_{t} P_{X_{t}} $$
+
+##### Halflife
+
+$$ Halflife = - ln(2)/k $$
+
+##### O-U equation
+
+$$ dz_{t} = k(\mu - z_{t})dt + \sigma dW_{t} $$
+
+##### Returns
+
+$$ Ret_{t} = ln(P_{X_{t}} / P_{X_{t-1}}) - ln(P_{Y_{t}} / P_{Y_{t-1}}) $$
 
