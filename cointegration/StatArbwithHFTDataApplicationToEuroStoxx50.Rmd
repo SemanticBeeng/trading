@@ -136,10 +136,15 @@ In sample t-stat at 5min and 10 min frequencies have certain predictive power fo
 
 The first principal component explains 97% of the variation in the data for the overall set of pairs in the index.
 
-9. Use the above indicators to select a subset of 5 pairs and trade the enhanced strategy
+9. Use the above indicators to trade the enhanced strategy on the subset of 5 pairs filtered through the PCA test.
 
 *Key finding*
 The extra indicators heavily improved the attractiveness of the results for the pairs sampled at the high-frequency intervals.
+
+Almost all the information ratiosare above 2 when traded at high frequencies.
+Average maximum drowdown at high frequencies is 1.58% and 4.26% at daily frequency.
+Average maximum drowdown duration at high frequencies is 22 days at high-frequencies, and 55 days for daily frequency.
+
 
 ***
 ### Issues and possible improvements
