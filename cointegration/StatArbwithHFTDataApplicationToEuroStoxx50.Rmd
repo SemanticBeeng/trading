@@ -77,11 +77,7 @@ If indeed the daily data is enough then may choose to use free daily data from e
 
 ### Introduction
 
-* The extent to which a pair of stocks in EuroStoxx 50 is cointegrated at daily frequencies is a good indicator for profitability at higher frequencies if the pair is selected by a combination of criteria involving cointegration.
-
-* using high-frequency data leads to higher potentially achievable information ratio compared to the use of daily closing prices
-
-Issue: implies causality but only shows "association".
+* Agrue for the presence of arbitrage profitiability is a selection of EuroStoxx 50 equities when using a novel approach combining cointegration at HFT and daily leves, time adaptable beta and a test to pairs that account for most of the variability in the set of stocks.
 
 ***
 ### Main techniques
@@ -138,4 +134,11 @@ Too little out of sample data.
 
 "For high-frequency data the in- and out-of-sample periods have the same lengths"
 Data is split just in two sets. Needs more sophisticated cross validation, k-fold validation, etc.
+
+The HFT data used in the paper spans 4 monts for Summer and Fall. This makes the results to seasonality of the spread. 
+A solution would be to test with larger out of sample HFT data and seek patterns of seasonality. ("seasonal version of the Ornstein-Uhlenbeck formula": https://www.evernote.com/shard/s175/nl/19543423/4ad339f8-c347-43a4-a9c5-04bedd77c3e8)
+Addionallity, add a momentum component to the strategy to go around the assumption of mean reversion.
+
+
+
 
