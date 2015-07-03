@@ -79,13 +79,18 @@ If indeed the daily data is enough then may choose to use free daily data from e
 
   Agrue for the presence of arbitrage profitiability is a selection of EuroStoxx 50 equities when using a novel approach combining cointegration at HFT and daily leves, time adaptable beta and a test to pairs that account for most of the variability in the set of stocks.
 
-### Main points
+###& Main points
 
  * Pairs grouped by industry sector are sometimes cointegrated and can be traded with pair-trading strategies
  * Using a Kalmnan filter to determine a time adaptable beta is superior to using OLS or DESP
  * The simple strategy does not have attractive results.
  * Using sampling frequencies higher than daily offer investment characteristics more attractive then when using daily data 
  * Using PCA to subselect pairs which account for most of the variablility improves returns
+
+###& Conclusion 
+
+  Statistical arbitrage at daily frequencies in EuroStoxx 50 is not attractive but testing cointegration at high frequencies, using a time adaptive beta and filerting stocks with maximum  variability makes strategies attractive.
+  
 
 ***
 ### Main techniques
