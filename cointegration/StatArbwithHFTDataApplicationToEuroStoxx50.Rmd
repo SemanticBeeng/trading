@@ -1,7 +1,7 @@
 ---
-title: "Statistical Arbitrage and High-Frequency Data with an Application to Eurostoxx 50 Equities"
+title: "Replication of : `Statistical Arbitrage and High-Frequency Data with an Application to Eurostoxx 50 Equities`"
 author: Nick Vintila
-date: July 1st, 2015
+date: July 3rd, 2015
 output:
   pdf_document:
     toc: true
@@ -127,7 +127,7 @@ Compares favorably with the performance of Eurostoxx 50 index and the index of M
 
 7. Calculate the cointegration of pairs using Engle and Granger (chosen vs. the Johansen test due to simplicity and lower variance)
 
-$$ T_{t} = \beta X_{t} + \epsilon_{t} $$
+$$ Y_{t} = \beta X_{t} + \epsilon_{t} $$
 
 8. Test the hypothesis of positive correlation between the t-stat of the ADF test on the OLS residuals and the out of sample "information ratio" (uses bootstrap); the test is a PCA on a normalized matrix of t-stats from the ADF test for 176 pairs x (5, 10, 20, 30, 60) frequencies
 
@@ -141,9 +141,9 @@ The first principal component explains 97% of the variation in the data for the 
 *Key finding*
 The extra indicators heavily improved the attractiveness of the results for the pairs sampled at the high-frequency intervals.
 
-Almost all the information ratiosare above 2 when traded at high frequencies.
-Average maximum drowdown at high frequencies is 1.58% and 4.26% at daily frequency.
-Average maximum drowdown duration at high frequencies is 22 days at high-frequencies, and 55 days for daily frequency.
+ * Almost all the information ratios are above 2 when traded at high frequencies.
+ * Average maximum drowdown at high frequencies is 1.58% and 4.26% at daily frequency.
+ * Average maximum drowdown duration at high frequencies is 22 days at high-frequencies, and 55 days for daily frequency.
 
 
 ***
