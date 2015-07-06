@@ -100,3 +100,7 @@ print(data.frame(t(tStats[,-c(1,2)])))
 (numTrades <- sum(tStats$Num.Trades))
 (meanAvgWLR <- mean(tStats$Avg.WinLoss.Ratio[tStats$Avg.WinLoss.Ratio < Inf], na.rm=TRUE))
 
+portString <- paste0("portfolio.", portfolio.st)
+portPL <- .blotter[[portString]]$summary$Net.Trading.PL
+portPL <- portPL[-1,] #remove initialization date
+plot(cumsum(portPL))
