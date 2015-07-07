@@ -159,6 +159,14 @@ The HFT data used in the paper spans 4 monts for Summer and Fall. This makes the
 A solution would be to test with larger out of sample HFT data and seek patterns of seasonality. ("seasonal version of the Ornstein-Uhlenbeck formula": https://www.evernote.com/shard/s175/nl/19543423/4ad339f8-c347-43a4-a9c5-04bedd77c3e8)
 Addionallity, add a momentum component to the strategy to go around the assumption of mean reversion.
 
+## Hypothesis Summary
+
+ * subject: power of prediction of profitability
+ * independent variables: prices of the stocks in Euro Stoxx 50 
+ * dependent variables:
+   + cointegration of pairs created within each industry sector
+   + variance of the spread between a selection of pairs that account for most of the variance
+
 ### Misc Formulae
 
 ##### Spread
