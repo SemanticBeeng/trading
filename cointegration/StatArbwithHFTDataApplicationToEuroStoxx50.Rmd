@@ -185,7 +185,40 @@ $$ dz_{t} = k(\mu - z_{t})dt + \sigma dW_{t} $$
 
 $$ Ret_{t} = ln(P_{X_{t}} / P_{X_{t-1}}) - ln(P_{Y_{t}} / P_{Y_{t-1}}) $$
 
+### Literature Review
+
+[@AlexanderCIndexingStatArb] makes the case for use of cointegration over correlation.
+Optimization models for benchmark replication focus on minimizing the variance of the tracking error.
+
+There are a number of drawbacks to optimization models based on tracking error or on correlation measures.
+
+1. Minimizing tracking error with respect to an index that is a linear combination of stock prices may result in a portfolio that is very sample-specific and unstable under volatile market circumstances.
+
+2. Additional limitations relate to the very nature of correlation as a measure of dependence; it is applicable only to stationary variables such as stock returns, so the method requires prior detrending of level variables (i.e., stock prices) and has the disadvantage of losing valuable information (i.e. the common trends in prices). Correlation is thus only a short-term statistic, and it lacks stability.
+
+3. Finally, depending on the model used to estimate it, correlation can be very sensitive to the presence of outliers, non-stationarity, or  volatility clustering, which limit the use of a long data history
+
+Cointegration has gained far wider acceptance than correlation.
+According to Lucas’s results, the presence of cointegration relations also has important consequences for the short-term predictability of asset prices.
+
+[@DunisHo2005] Over the last ten years, quantitative portfolio managers have made increasing use of conditional correlations. 
+This paper uses the concept of cointegration which relies on the long-term relationship between time series, and thus assets, to devise quantitative European equities portfolios.
+
+The results show that the designed portfolios are strongly cointegrated with the benchmark and indeed demonstrate good tracking performance. In the same vein, the long/short market neutral strategy generates steady returns under adverse market circumstances but, contrary to expectations, does not minimise volatility.
+
+[@HFDynamicPairsTrading]
+
+The proposed pairs trading system was applied to equity trading in U.S. equity markets in any type of market cycle condition to capture statistical mispricing between the prices of each stock pair based on its residuals and to model the stock pairs naturally as a mean-reversion process.
+
+The trading strategy yields cumulative returns up to 56.58% for portfolios of stock pairs, well exceeding the S&P 500 index performance by 34.35% over a 12-month trading period.
+
+The trading system might be especially more profitable at times when the U.S. stock market performed poorly.
+
+The cumulative net profit of the proposed pairs trading system during the 12 months of the out-of-sample test periods was 56.58%, with an average monthly return of 3.82% and a standard deviation of 1.40%.
+
+
+
 ### References
 
-Blah [see @endersgranger]
+
 

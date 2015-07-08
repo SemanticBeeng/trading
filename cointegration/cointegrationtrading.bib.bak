@@ -2,11 +2,125 @@
 % Encoding: UTF-8
 
 
-@Article{endersgranger,
+@Book{AlexanderMarketRsik,
+  Title                    = {Market Risk Analysis: Practical Financial Econometrics},
+  Author                   = {Alexander, C.},
+  Publisher                = {John Wiley \& Sons, Ltd.},
+  Year                     = {2008},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Book{AlexanderC,
+  Title                    = {Market Models: A Guide to Financial Data Analysis},
+  Author                   = {Alexander, C.},
+  Publisher                = {John Wiley \& Sons Ltd.},
+  Year                     = {2001},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Article{AlexanderCIndexingStatArb,
+  Title                    = {Indexing and Statistical Arbitrage},
+  Author                   = {Alexander, C. and Dumitriu, A},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Article{DunisHo2005,
+  Title                    = {Cointegration Portfolios of European Equities for Index Tracking and Market Neutral Strategies},
+  Author                   = {Dunis, C. L. and Ho, R.},
+  Journal                  = {Journal of Asset Management},
+  Year                     = {2005},
+  Number                   = {1},
+  Pages                    = {33-52},
+  Volume                   = {6},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Article{DunisAndShannon2005,
+  Title                    = {Emerging Markets of South-East and Central Asia: Do They Still Offer a Diversification Benefit?},
+  Author                   = {Dunis, C. L. and Shannon, G.},
+  Journal                  = {Journal of Asset Management},
+  Year                     = {2005},
+  Number                   = {3},
+  Volume                   = {6},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Book{@DunisLawsNaim,
+  Title                    = {Applied Quantitative Methods for Trading and Investment},
+  Author                   = {Dunis, C., Laws, J. And Naïm, P.},
+  Publisher                = {John Wiley \& Sons},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Article{EndersGranger1998,
   Title                    = {Unit-Root Tests and Asymmetric Adjustment with an Example Using the Term Structure of Interest Rates},
   Author                   = {Enders, W. and Granger},
   Journal                  = {Journal of Business \& Economic Statistics},
   Year                     = {1998},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Article{LucasEffectOfLongTermEquilibrium,
+  Title                    = {Strategic and Tactical Asset Allocation and the Effect of Long-Run Equilibrium Relations.},
+  Author                   = {Lucas, A.},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.08}
+}
+
+@Article{MeucciStatArb,
+  Title                    = {Review of Statistical Arbitrage, Cointegration, and Multivariate Ornstein-Uhlenbeck},
+  Author                   = {Attilio Meucci},
+  Year                     = {2009},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Article{HFDynamicPairsTrading,
+  Title                    = {High Frequency and Dynamic Pairs Trading Based on Statistical Arbitrage Using a Two-Stage Correlation and Cointegration Approach},
+  Author                   = {Miao, George},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.08}
+}
+
+@Article{NathHFTPairTrading,
+  Title                    = {High Frequency Pairs Trading with U.S. Treasury Securities: Risks and Rewards for Hedge Funds},
+  Author                   = {Purnendu Nath},
+  Year                     = {2003},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Book{PfaffCointegratedTimeSeries,
+  Title                    = {Analysis of Integrated and Cointegrated Time Series with R},
+  Author                   = {Bernhard Pfaff},
+  Publisher                = {Springer},
+  Year                     = {2008},
+
+  Owner                    = {nickdsc},
+  Timestamp                = {2015.07.07}
+}
+
+@Article{YuxingChen,
+  Title                    = {Machine Learning in Pairs Trading Strategies},
+  Author                   = {Yuxing Chen, Weiluo Ren, Xiaoxiong Lu},
 
   Owner                    = {nickdsc},
   Timestamp                = {2015.07.07}
