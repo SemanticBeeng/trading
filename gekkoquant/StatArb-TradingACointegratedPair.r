@@ -7,13 +7,19 @@ symbolLst<-c("RDS-A","RDS-B")
 title<-c("Royal Dutch Shell A vs B Shares")
 
 ### SECTION 1 - Download Data & Calculate Returns ####Download the data
-symbolData <- new.env() #Make a new environment for quantmod to store data in
+#Make a new environment for quantmod to store data in
+symbolData <- new.env() 
 getSymbols(symbolLst, env = symbolData, src = "yahoo", from = backtestStartDate)
 
-#We know this pair is cointegrated from the tutorial#http://gekkoquant.com/2012/12/17/statistical-arbitrage-testing-for-cointegration-augmented-dicky-fuller/#The tutorial found the hedge ratio to be 0.9653
+#We know this pair is cointegrated from the tutorial
+#http://gekkoquant.com/2012/12/17/statistical-arbitrage-testing-for-cointegration-augmented-dicky-fuller/
+#The tutorial found the hedge ratio to be 0.9653
+
 stockPair <- list(
-  a = coredata(Cl(eval(parse(text=paste("symbolData$\"",symbolLst[1],"\"",sep="")))))   #Stock A
-  ,b = coredata(Cl(eval(parse(text=paste("symbolData$\"",symbolLst[2],"\"",sep=""))))) #Stock B
+  #Stock A
+   a = coredata(Cl(eval(parse(text=paste("symbolData$\"", symbolLst[1],"\"",sep="")))))  
+  #Stock B
+  ,b = coredata(Cl(eval(parse(text=paste("symbolData$\"", symbolLst[2],"\"",sep=""))))) 
   ,hedgeRatio = 0.9653
   ,name=title)
 
@@ -37,11 +43,11 @@ simulateTrading <- function(stockPair) {
   upperThreshold = movingAvg + nStd * movingStd
   lowerThreshold = movingAvg - nStd * movingStd
   
-  aboveUpperBand <- spread>upperThreshold
-  belowLowerBand <- spread<lowerThreshold
+  aboveUpperBand <- spread > upperThreshold
+  belowLowerBand <- spread < lowerThreshold
   
-  aboveMAvg <- spread>movingAvg
-  belowMAvg <- spread<movingAvg
+  aboveMAvg <- spread > movingAvg
+  belowMAvg <- spread < movingAvg
   
   aboveUpperBand[is.na(aboveUpperBand)] <- 0
   belowLowerBand[is.na(belowLowerBand)] <- 0
@@ -55,11 +61,13 @@ simulateTrading <- function(stockPair) {
   #It's used so that if we get many 'short sell triggers' it will only execute a maximum of 1 position
   #Short position - Go short if spread is above upper threshold and go long if below the moving avg
   #Note: shortPositionFunc only lets us GO short or close the position
-  cappedCumSum <- function(x, y,max_value,min_value) max(min(x + y, max_value), min_value)
+  cappedCumSum <- function(x, y, max_value, min_value) max(min(x + y, max_value), min_value)
+  
   shortPositionFunc <- function(x,y) { cappedCumSum(x,y,0,-1) }
-  longPositionFunc <- function(x,y) { cappedCumSum(x,y,1,0) }
+  longPositionFunc  <- function(x,y) { cappedCumSum(x,y,1,0)  }
+  
   shortPositions <- Reduce(shortPositionFunc, -1 * aboveUpperBand + belowMAvg, accumulate=TRUE)
-  longPositions <- Reduce(longPositionFunc, -1 * aboveMAvg + belowLowerBand, accumulate=TRUE)
+  longPositions  <- Reduce(longPositionFunc,  -1 * aboveMAvg + belowLowerBand, accumulate=TRUE)
   positions = longPositions + shortPositions
   
   dev.new()

@@ -159,14 +159,15 @@ The HFT data used in the paper spans 4 monts for Summer and Fall. This makes the
 A solution would be to test with larger out of sample HFT data and seek patterns of seasonality. ("seasonal version of the Ornstein-Uhlenbeck formula": https://www.evernote.com/shard/s175/nl/19543423/4ad339f8-c347-43a4-a9c5-04bedd77c3e8)
 Addionallity, add a momentum component to the strategy to go around the assumption of mean reversion.
 
-## Hypothesis Summary
+<!--
+## Hypothesis Summary (pending)
 
  * subject: power of prediction of profitability
  * independent variables: prices of the stocks in Euro Stoxx 50 
  * dependent variables:
    + cointegration of pairs created within each industry sector
    + variance of the spread between a selection of pairs that account for most of the variance
-
+--> 
 ### Misc Formulae
 
 ##### Spread
@@ -185,7 +186,7 @@ $$ dz_{t} = k(\mu - z_{t})dt + \sigma dW_{t} $$
 
 $$ Ret_{t} = ln(P_{X_{t}} / P_{X_{t-1}}) - ln(P_{Y_{t}} / P_{Y_{t-1}}) $$
 
-### Literature Review
+## Literature Review
 
 [@AlexanderCIndexingStatArb] makes the case for use of cointegration over correlation.
 Optimization models for benchmark replication focus on minimizing the variance of the tracking error.
@@ -216,6 +217,17 @@ The trading system might be especially more profitable at times when the U.S. st
 
 The cumulative net profit of the proposed pairs trading system during the 12 months of the out-of-sample test periods was 56.58%, with an average monthly return of 3.82% and a standard deviation of 1.40%.
 
+[@DynModStatArb]
+Gaussian linear state-space processes have recently been proposed as a model for such spreads under the assumption that the observed process is a noisy realization of some hidden states. 
+
+Real-time estimation of the unobserved spread process can reveal temporary market inefficiencies which can then be exploited to generate excess returns. 
+This work employs the state-space framework for modeling spread processes and extend this methodology along three different directions. 
+
+1. Introduce time-dependency in the model parameters, which allows for quick adaptation to changes in the data generating process. 
+
+2. Provide an on-line estimation algorithm that can be constantly run in real-time. The algorithm is particularly suitable for building aggressive trading strategies based on high-frequency data and may be used as a monitoring device for mean-reversion. 
+
+3. The framework provides informative uncertainty measures of all the estimated parameters. Experimental results based on Monte Carlo simulations and historical equity data are discussed, including a co-integration relationship involving two exchange-traded funds.
 
 
 ### References
