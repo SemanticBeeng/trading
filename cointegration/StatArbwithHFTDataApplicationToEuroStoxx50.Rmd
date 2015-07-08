@@ -5,7 +5,7 @@ date: July 3rd, 2015
 output:
   pdf_document:
     toc: true
-    
+bibliography: cointegrationtrading.bib    
 ---
 
 ## Data Summary
@@ -184,4 +184,8 @@ $$ dz_{t} = k(\mu - z_{t})dt + \sigma dW_{t} $$
 ##### Returns
 
 $$ Ret_{t} = ln(P_{X_{t}} / P_{X_{t-1}}) - ln(P_{Y_{t}} / P_{Y_{t-1}}) $$
+
+### References
+
+Blah [see @endersgranger]
 
