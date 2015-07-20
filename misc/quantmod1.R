@@ -19,24 +19,31 @@ storageDir <- file.path("/datascience/marketdata/storage")
 #setSymbolLookup.FI(storage_method = "rda",
 #                   base_dir = file.path("/datascience/marketdata/storage"))
 
-tmpenv$ORAN.PA <- getSymbols(
+tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
     from = from,
-    to = from + 5,
+    to = from + 0,
     src = "FI",
     env = tmpenv,
     dir = storageDir,
     etension = "RData",
     auto.assign = FALSE,
-    verbose = TRUE)
+    verbose = TRUE))
 
 has.Vo(tmpenv$ORAN.PA)
 has.Ask(tmpenv$ORAN.PA)
 has.Bid(tmpenv$ORAN.PA)
 has.HLC(tmpenv$ORAN.PA)
-tmpenv$ORAN.PA['2013-07-01 09']
+#tmpenv$ORAN.PA['2013-07-01 09']
 
 p <- periodicity(tmpenv$ORAN.PA)
 unclass(p)
 
-to.minutes5(tmpenv$ORAN.PA, "Price")
+#to.minutes5(data(sample_matrix), name=NULL)
+
+ep <- endpoints(tmpenv$ORAN.PA, on="minutes", k=1); ep
+
+ps <- period.sum(tmpenv$ORAN.PA[, 1], ep); ps
+
+ts <- align.time(ps, 60)
+
