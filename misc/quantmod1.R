@@ -1,14 +1,15 @@
-require(latticeExtra)
-require(ggplot2)
-require(reshape2)
-suppressPackageStartupMessages(
-  require(googleVis)
-)
+# Source: https://github.com/evelynmitchell/RFinanceDemos/blob/e336227252179bb437f0394ba6c5613237524567/blotter/pkg/FinancialInstrument/inst/tests/test-getSymbols.FI.R
+#require(latticeExtra)
+#require(ggplot2)
+#require(reshape2)
+#suppressPackageStartupMessages(
+  #require(googleVis)
+#)
 require(quantmod)
 require(FinancialInstrument)
-require(PerformanceAnalytics)
-require(xtsExtra)
-require(rCharts)
+#require(PerformanceAnalytics)
+#require(xtsExtra)
+#require(rCharts)
 
 #setwd("/datascience/marketdata/storage")
 
