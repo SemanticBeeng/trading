@@ -60,3 +60,4 @@ tsdiag(arma11)
 ## Using auto.arima()
 library(forecast)
 auto.arima(y, max.p = 3, max.q = 3, start.p = 1, start.q = 1, ic = "aic")
+

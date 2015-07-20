@@ -1,6 +1,8 @@
 series <-  rnorm(1000)
+plot(series)
 y.st <- filter(series, filter=c(0.6, -0.28),
                method='recursive')
+plot(y.st)
 ar2.st <- arima(y.st, c(2, 0, 0), include.mean=FALSE,
                 transform.pars=FALSE, method="ML")
 ar2.st$coef
