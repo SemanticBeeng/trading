@@ -12,7 +12,7 @@ tmpenv <- new.env()
 
 symbol <- "ORAN.PA"
 from <- as.Date('2013-07-01')
-to <- from + 516
+#to <- from + 516
 #tmpenv$ORAN.PA <- xts(1:517, as.Date(from:to))
 storageDir <- file.path("/datascience/marketdata/storage")
 
@@ -39,12 +39,14 @@ has.HLC(tmpenv$ORAN.PA)
 p <- periodicity(tmpenv$ORAN.PA)
 unclass(p)
 
+head(tmpenv$ORAN.PA, n = 500)
 # Source: http://www.quantmod.com/examples/data/
-#to.minutes5(data(sample_matrix), name=NULL)
 
-ep <- endpoints(tmpenv$ORAN.PA, on = "minutes", k = 1); ep
-
-ps <- period.sum(tmpenv$ORAN.PA[, 1], ep); 
-
+ps <- period.sum(tmpenv$ORAN.PA[, 1], endpoints(tmpenv$ORAN.PA, on = "minutes", k = 1)); 
+ps
 ts <- align.time(ps, 60)
+
+# 
+ohlc <- to.minutes5(tmpenv$ORAN.PA[,1])
+align.time(ohlc, 60)
 
