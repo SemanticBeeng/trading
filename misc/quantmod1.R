@@ -21,8 +21,8 @@ storageDir <- file.path("/datascience/marketdata/storage")
 
 tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
-    from = from,
-    to = from + 0,
+    from = from + 20,
+    to = from + 21,
     src = "FI",
     env = tmpenv,
     dir = storageDir,
@@ -46,7 +46,7 @@ ps <- period.sum(tmpenv$ORAN.PA[, 1], endpoints(tmpenv$ORAN.PA, on = "minutes", 
 ps
 ts <- align.time(ps, 60)
 
-# 
+# To OHLC
 ohlc <- to.minutes5(tmpenv$ORAN.PA[,1])
 ohlc <- align.time(ohlc, 60)
 
