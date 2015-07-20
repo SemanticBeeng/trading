@@ -39,11 +39,12 @@ has.HLC(tmpenv$ORAN.PA)
 p <- periodicity(tmpenv$ORAN.PA)
 unclass(p)
 
+# Source: http://www.quantmod.com/examples/data/
 #to.minutes5(data(sample_matrix), name=NULL)
 
-ep <- endpoints(tmpenv$ORAN.PA, on="minutes", k=1); ep
+ep <- endpoints(tmpenv$ORAN.PA, on = "minutes", k = 1); ep
 
-ps <- period.sum(tmpenv$ORAN.PA[, 1], ep); ps
+ps <- period.sum(tmpenv$ORAN.PA[, 1], ep); 
 
 ts <- align.time(ps, 60)
 
