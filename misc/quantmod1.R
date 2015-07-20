@@ -51,3 +51,4 @@ ohlc <- to.minutes5(tmpenv$ORAN.PA[,1])
 ohlc <- align.time(ohlc, 60)
 
 chartSeries(ohlc)
+
