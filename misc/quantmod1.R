@@ -39,11 +39,13 @@ storageDir <- file.path("/datascience/marketdata/storage")
 
 getSymbols(
     symbol,
+    from=from,
+    to=to,
     src="FI",
     env = tmpenv,
     dir=storageDir,
     etension="RData",
     auto.assign = FALSE,
     verbose = TRUE)
-
+# 
 
