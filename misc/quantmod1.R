@@ -12,7 +12,7 @@ tmpenv <- new.env()
 
 symbol <- "AIRP.PA"
 from <- as.Date('2000-01-01')
-to <- as.Date('2009-12-31')
+to <- as.Date('2001-01-01')
 #tmpenv$ORAN.PA <- xts(1:517, as.Date(from:to))
 storageDir <- file.path("/datascience/marketdata/storage")
 
@@ -53,5 +53,5 @@ ohlc <- align.time(ohlc, 60)
 
 #chartSeries(x = window(ohlc, start = c(2000, 1), end = c(2000, 2)), name = symbol, TA='addVo()')
 chartSeries(x = ohlc, name = symbol, TA='addVo()')
-zoomChart("2000-1::")
-zoomChart()
+zoomChart("2000-1-1::2000-1-1")
+#zoomChart()
