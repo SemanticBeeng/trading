@@ -48,10 +48,10 @@ head(tmpenv$ORAN.PA, n = 50)
 #ts <- align.time(ps, 60)
 
 # To OHLC
-ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 5)
+ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 1440)
 ohlc <- align.time(ohlc, 60)
 
 #chartSeries(x = window(ohlc, start = c(2000, 1), end = c(2000, 2)), name = symbol, TA='addVo()')
 chartSeries(x = ohlc, name = symbol, TA='addVo()')
-zoomChart("2000-1-1::2000-1-1")
-#zoomChart()
+zoomChart("2000-01::2000-05")
+zooom()
