@@ -10,8 +10,8 @@ require(FinancialInstrument)
 
 tmpenv <- new.env()
 
-symbol <- "ORAN.PA"
-from <- as.Date('2013-07-01')
+symbol <- "AIRP.PA"
+from <- as.Date('2014-07-01')
 #to <- from + 516
 #tmpenv$ORAN.PA <- xts(1:517, as.Date(from:to))
 storageDir <- file.path("/datascience/marketdata/storage")
@@ -22,7 +22,7 @@ storageDir <- file.path("/datascience/marketdata/storage")
 tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
     from = from,
-    to = from + 9,
+    to = from + 365,
     src = "FI",
     env = tmpenv,
     dir = storageDir,
