@@ -11,8 +11,8 @@ require(FinancialInstrument)
 tmpenv <- new.env()
 
 symbol <- "AIRP.PA"
-from <- as.Date('2014-07-01')
-#to <- from + 516
+from <- as.Date('2015-01-01')
+to <- as.Date('2015-07-08')
 #tmpenv$ORAN.PA <- xts(1:517, as.Date(from:to))
 storageDir <- file.path("/datascience/marketdata/storage")
 
@@ -22,7 +22,7 @@ storageDir <- file.path("/datascience/marketdata/storage")
 tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
     from = from,
-    to = from + 365,
+    to = to,
     src = "FI",
     env = tmpenv,
     dir = storageDir,
@@ -48,7 +48,7 @@ head(tmpenv$ORAN.PA, n = 50)
 #ts <- align.time(ps, 60)
 
 # To OHLC
-ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 720)
+ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 1440)
 ohlc <- align.time(ohlc, 60)
 
 chartSeries(x = ohlc, name = symbol, TA='addVo()')
