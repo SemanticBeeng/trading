@@ -22,7 +22,7 @@ storageDir <- file.path("/datascience/marketdata/storage")
 tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
     from = from,
-    to = from + 2,
+    to = from + 9,
     src = "FI",
     env = tmpenv,
     dir = storageDir,
@@ -39,7 +39,7 @@ has.HLC(tmpenv$ORAN.PA)
 p <- periodicity(tmpenv$ORAN.PA)
 unclass(p)
 
-head(tmpenv$ORAN.PA, n = 500)
+head(tmpenv$ORAN.PA, n = 50)
 
 # Source: http://www.quantmod.com/examples/data/
 
@@ -48,7 +48,7 @@ head(tmpenv$ORAN.PA, n = 500)
 #ts <- align.time(ps, 60)
 
 # To OHLC
-ohlc <- to.period(tmpenv$ORAN.PA[, 1, 2], period = "minutes", k = 5)
+ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 5)
 ohlc <- align.time(ohlc, 60)
 
 chartSeries(x = ohlc, name = symbol, TA='addVo()')
