@@ -12,7 +12,7 @@ tmpenv <- new.env()
 
 symbol <- "AIRP.PA"
 from <- as.Date('2000-01-01')
-to <- as.Date('2001-01-01')
+to <- as.Date('2015-08-08')
 #tmpenv$ORAN.PA <- xts(1:517, as.Date(from:to))
 storageDir <- file.path("/datascience/marketdata/storage")
 
@@ -49,9 +49,23 @@ head(tmpenv$ORAN.PA, n = 50)
 
 # To OHLC
 ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 1440)
+colnames(ohlc) <- c("Open", "High", "Low", "Close", "Volume")
 ohlc <- align.time(ohlc, 60)
 
+# Zoom interactivelly: http://www.quantmod.com/documentation/zoomChart.html
 #chartSeries(x = window(ohlc, start = c(2000, 1), end = c(2000, 2)), name = symbol, TA='addVo()')
 chartSeries(x = ohlc, name = symbol, TA='addVo()')
 zoomChart("2000-01::2000-05")
 zooom()
+
+# googleVis charts
+ohlc.df =data.frame(date = as.Date(index(ohlc)), 
+                    open = as.numeric(ohlc$Open),
+                    close = as.numeric(ohlc$Close),
+                    high = as.numeric(ohlc$High),
+                    low = as.numeric(ohlc$Low))
+
+mplot = gvisCandlestickChart(ohlc.df, xvar = "date", low = "low", 
+                             open = "open", close = "close", high = "high",
+                             options = list(legend = 'none', width = 900, title = "Stock Price"))
+plot(mplot)
