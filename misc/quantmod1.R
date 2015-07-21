@@ -48,7 +48,7 @@ head(tmpenv$ORAN.PA, n = 50)
 #ts <- align.time(ps, 60)
 
 # To OHLC
-ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 5)
+ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 720)
 ohlc <- align.time(ohlc, 60)
 
 chartSeries(x = ohlc, name = symbol, TA='addVo()')
