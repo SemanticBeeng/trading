@@ -11,8 +11,8 @@ require(FinancialInstrument)
 tmpenv <- new.env()
 
 symbol <- "AIRP.PA"
-from <- as.Date('2000-01-01')
-to <- from + 364
+from <- as.Date('2000-04-01')
+to <- from + 100 #364
 
 storageDir <- file.path("/datascience/marketdata/storage")
 
@@ -30,12 +30,16 @@ tmpenv$ORAN.PA <- na.omit(getSymbols(
     auto.assign = FALSE,
     verbose = TRUE))
 
+# tmpenv$ORAN.PA [tmpenv$ORAN.PA$Price < 128.3] # 5 rows
+
 # Merge to detect missing days
 # http://artax.karlin.mff.cuni.cz/r-help/library/xts/html/merge.html
 # http://stackoverflow.com/a/4139124/4032515
 tmpenv$allDays <- xts( , as.Date(from:to))
 tmp <- merge(tmpenv$ORAN.PA, tmpenv$allDays, fill = -1)
+# http://stackoverflow.com/a/1686614/4032515
 
+tmp [tmp$Price == -1 ]
 
 has.Vo(tmpenv$ORAN.PA)
 has.Ask(tmpenv$ORAN.PA)

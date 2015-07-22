@@ -2,7 +2,7 @@ library(quantmod)
 library(googleVis)
 
 prices = c("MSFT")
-getSymbols(prices)
+getSymbols("MSFT")
 
 msft =data.frame(date = as.Date(index(MSFT)), open = 
                    as.numeric(MSFT$MSFT.Open),close = as.numeric(MSFT$MSFT.Close),
