@@ -11,13 +11,32 @@ require(FinancialInstrument)
 tmpenv <- new.env()
 
 symbol <- "AIRP.PA"
-from <- as.Date('2000-04-01')
-to <- from + 100 #364
+from <- as.Date('2000-04-19')
+to <- from + 10 #364
 
 storageDir <- file.path("/datascience/marketdata/storage")
 
 #setSymbolLookup.FI(storage_method = "rda",
 #                   base_dir = file.path("/datascience/marketdata/storage"))
+
+result <- lapply(seq(from, to, "days"), 
+       function(day) 
+         tryCatch(getSymbols(
+            symbol,
+            from = day,
+            to = day,
+            src = "FI",
+            env = tmpenv,
+            dir = storageDir,
+            etension = "RData",
+            auto.assign = TRUE,
+            verbose = TRUE) ,
+            
+            error = function(e) {
+              e
+              }
+            )
+       )
 
 tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
@@ -35,10 +54,17 @@ tmpenv$ORAN.PA <- na.omit(getSymbols(
 # Merge to detect missing days
 # http://artax.karlin.mff.cuni.cz/r-help/library/xts/html/merge.html
 # http://stackoverflow.com/a/4139124/4032515
-#tmpenv$allDays <- xts( , as.Date(from:to))
-tmpenv$allDays <- xts( , index(tmpenv$ORAN.PA[endpoints(tmpenv$ORAN.PA, on = 'days', k = 1)]))
-tmp <- merge(tmpenv$allDays, tmpenv$ORAN.PA, fill = -1)
-tmp# http://stackoverflow.com/a/1686614/4032515
+tmpenv$allDays <- xts( , as.Date(from:to))
+# Build an xts for all days of the year from endpoints of real trade data (not aligned to day endpoint!)
+ep <- index(tmpenv$ORAN.PA[endpoints(tmpenv$ORAN.PA, on = 'days', k = 1)])
+tmpenv$allTradedDays <- xts(rep(-1, length(ep)) , ep)
+                      
+#tmpenv$ORAN_PA_Daily <- index(to.daily(tmpenv$ORAN.PA[, 1:2]))
+#tmpenv$allDays <- xts( , index(to.daily(tmpenv$ORAN.PA[, 1:2])))
+
+tmp <- merge(tmpenv$allDays, tmpenv$ORAN.PA, fill = -2)
+tmp
+# http://stackoverflow.com/a/1686614/4032515
 
 tmp [tmp$Price == -1 ]
 
