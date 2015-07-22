@@ -13,7 +13,7 @@ tmpenv <- new.env()
 symbol <- "AIRP.PA"
 from <- as.Date('2000-01-01')
 to <- from + 364
-tmpenv$allDays <- xts(1:365, as.Date(from:to))
+
 storageDir <- file.path("/datascience/marketdata/storage")
 
 #setSymbolLookup.FI(storage_method = "rda",
@@ -29,6 +29,13 @@ tmpenv$ORAN.PA <- na.omit(getSymbols(
     etension = "RData",
     auto.assign = FALSE,
     verbose = TRUE))
+
+# Merge to detect missing days
+# http://artax.karlin.mff.cuni.cz/r-help/library/xts/html/merge.html
+# http://stackoverflow.com/a/4139124/4032515
+tmpenv$allDays <- xts( , as.Date(from:to))
+tmp <- merge(tmpenv$ORAN.PA, tmpenv$allDays, fill = -1)
+
 
 has.Vo(tmpenv$ORAN.PA)
 has.Ask(tmpenv$ORAN.PA)
