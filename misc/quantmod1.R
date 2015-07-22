@@ -7,14 +7,15 @@
 #)
 require(quantmod)
 require(FinancialInstrument)
+require(lubridate)
 
 tmpenv <- new.env()
 # todo: there must be a better way ...
-oneDay <- as.POSIXct('2000-01-02', tz = "GMT") - as.POSIXct('2000-01-01', tz = "GMT")
+#oneDay <- as.POSIXlt('2000-01-02', tz = "GMT") - as.POSIXlt('2000-01-01', tz = "GMT")
 
 symbol <- "AIRP.PA"
-from <- as.POSIXct('2000-04-21', tz = "GMT")
-to <- from + 5 * oneDay #364
+from <- as.POSIXlt('2000-04-21', tz = "GMT")
+to <- as.POSIXlt('2000-04-26', tz = "GMT") #from + 5 * oneDay #364
 
 storageDir <- file.path("/datascience/marketdata/storage")
 
@@ -35,19 +36,24 @@ result <- try(getSymbols(
 
 #daysCount <- to - from + 1
 #daysRange <- xts(rep(-1, daysCount) , seq(from = from, to = to, by = 'day'))
-daysRange <- xts( , seq(from = from, to = to, by = 'day'))
-daysTraded <- xts( , unique(round(index(tmpenv$AIRP.PA), 'day')))
+daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
+#daysTraded <- unique(round(index(tmpenv$AIRP.PA), 'day'))
+# http://stackoverflow.com/questions/11325631/round-a-posix-date-posixct-with-base-r-functionality
+daysTraded <- unique(floor_date(index(tmpenv$AIRP.PA), "day"))
 
-tmpenv$ORAN.PA <- na.omit(getSymbols(
-    symbol,
-    from = from,
-    to = to,
-    src = "FI",
-    env = tmpenv,
-    dir = storageDir,
-    etension = "RData",
-    auto.assign = FALSE,
-    verbose = TRUE))
+# https://tonybreyal.wordpress.com/2011/11/29/outersect-the-opposite-of-rs-intersect-function/
+setdiff(daysRange, daysTraded)
+
+#tmpenv$ORAN.PA <- na.omit(getSymbols(
+#    symbol,
+#    from = from,
+#    to = to,
+#    src = "FI",
+#    env = tmpenv,
+#    dir = storageDir,
+#    etension = "RData",
+#    auto.assign = FALSE,
+#    verbose = TRUE))
 
 # tmpenv$ORAN.PA [tmpenv$ORAN.PA$Price < 128.3] # 5 rows
 
