@@ -9,17 +9,20 @@ require(quantmod)
 require(FinancialInstrument)
 
 tmpenv <- new.env()
+# todo: there must be a better way ...
+oneDay <- as.POSIXct('2000-01-02', tz = "GMT") - as.POSIXct('2000-01-01', tz = "GMT")
 
 symbol <- "AIRP.PA"
-from <- as.Date('2000-04-21')
-to <- from + 5 #364
+from <- as.POSIXct('2000-04-21', tz = "GMT")
+to <- from + 5 * oneDay #364
 
 storageDir <- file.path("/datascience/marketdata/storage")
 
 #setSymbolLookup.FI(storage_method = "rda",
 #                   base_dir = file.path("/datascience/marketdata/storage"))
+# http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
 
-result <- tryCatch(getSymbols(
+result <- try(getSymbols(
             symbol,
             from = from,
             to = to,
@@ -27,12 +30,13 @@ result <- tryCatch(getSymbols(
             env = tmpenv,
             dir = storageDir,
             etension = "RData",
-            auto.assign = FALSE,
-            verbose = TRUE), 
-            error = function(e) {
-                cat("Error '", e, "' found!\n", sep = "")
-              }
-            )
+            auto.assign = TRUE,
+            verbose = TRUE))
+
+#daysCount <- to - from + 1
+#daysRange <- xts(rep(-1, daysCount) , seq(from = from, to = to, by = 'day'))
+daysRange <- xts( , seq(from = from, to = to, by = 'day'))
+daysTraded <- xts( , unique(round(index(tmpenv$AIRP.PA), 'day')))
 
 tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
