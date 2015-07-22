@@ -11,32 +11,28 @@ require(FinancialInstrument)
 tmpenv <- new.env()
 
 symbol <- "AIRP.PA"
-from <- as.Date('2000-04-19')
-to <- from + 10 #364
+from <- as.Date('2000-04-21')
+to <- from + 5 #364
 
 storageDir <- file.path("/datascience/marketdata/storage")
 
 #setSymbolLookup.FI(storage_method = "rda",
 #                   base_dir = file.path("/datascience/marketdata/storage"))
 
-result <- lapply(seq(from, to, "days"), 
-       function(day) 
-         tryCatch(getSymbols(
+result <- tryCatch(getSymbols(
             symbol,
-            from = day,
-            to = day,
+            from = from,
+            to = to,
             src = "FI",
             env = tmpenv,
             dir = storageDir,
             etension = "RData",
-            auto.assign = TRUE,
-            verbose = TRUE) ,
-            
+            auto.assign = FALSE,
+            verbose = TRUE), 
             error = function(e) {
-              e
+                cat("Error '", e, "' found!\n", sep = "")
               }
             )
-       )
 
 tmpenv$ORAN.PA <- na.omit(getSymbols(
     symbol,
