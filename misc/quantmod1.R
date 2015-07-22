@@ -35,9 +35,10 @@ tmpenv$ORAN.PA <- na.omit(getSymbols(
 # Merge to detect missing days
 # http://artax.karlin.mff.cuni.cz/r-help/library/xts/html/merge.html
 # http://stackoverflow.com/a/4139124/4032515
-tmpenv$allDays <- xts( , as.Date(from:to))
-tmp <- merge(tmpenv$ORAN.PA, tmpenv$allDays, fill = -1)
-# http://stackoverflow.com/a/1686614/4032515
+#tmpenv$allDays <- xts( , as.Date(from:to))
+tmpenv$allDays <- xts( , index(tmpenv$ORAN.PA[endpoints(tmpenv$ORAN.PA, on = 'days', k = 1)]))
+tmp <- merge(tmpenv$allDays, tmpenv$ORAN.PA, fill = -1)
+tmp# http://stackoverflow.com/a/1686614/4032515
 
 tmp [tmp$Price == -1 ]
 
