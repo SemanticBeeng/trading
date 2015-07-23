@@ -8,6 +8,7 @@
 require(quantmod)
 require(FinancialInstrument)
 require(lubridate)
+library(dplyr)
 
 tmpenv <- new.env()
 # todo: there must be a better way ...
@@ -49,10 +50,19 @@ daysTraded <- unique(floor_date(index(tmpenv$AIRP.PA), "day"))
 daysDiff <- as.data.frame(setdiff(daysRange, daysTraded))
 colnames(daysDiff) <- c("date")
 
-daysDiff[is.weekend(as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")), ]
+#daysDiff[is.weekend(as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")), ]
+# Filter out Saturdays
+# http://stackoverflow.com/questions/9216138/find-the-day-of-a-week-in-r
+toPOSIXct <- function(x) as.POSIXct(x, tz='GMT', origin="1970-01-01")
+
+#daysDiff[wday(as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) != 6, ]
+daysDiff <- daysDiff %>% 
+            transmute(date = toPOSIXct(daysDiff$date)) %>% 
+            filter(wday(date) != 7) %>% 
+            filter(wday(date) != 0)
 
 #http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
-  as.POSIXct(956361600, tz='GMT', origin="1970-01-01")
+#as.POSIXct(956361600, tz='GMT', origin="1970-01-01")
 
 
 #tmpenv$ORAN.PA <- na.omit(getSymbols(
