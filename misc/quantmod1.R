@@ -7,8 +7,9 @@
 #)
 require(quantmod)
 require(FinancialInstrument)
+require(dplyr)
 require(lubridate)
-library(dplyr)
+require(chron)
 
 tmpenv <- new.env()
 storageDir <- file.path("/datascience/marketdata/storage")
@@ -16,11 +17,17 @@ storageDir <- file.path("/datascience/marketdata/storage")
 #setSymbolLookup.FI(storage_method = "rda",
 #                   base_dir = file.path("/datascience/marketdata/storage"))
 
+isChristmas <- function (x) {
+  #cat("isChristmas " + month(x) + day(x)  + " = " + (month(x) == 12 && (day(x) == 25 || day(x) == 26)) + "\n")
+  #cat("isChristmas " + x + "\n")
+  return (month(x) == 12) && (day(x) == 25 || day(x) == 26)
+}
+  
 symbol <- "AIRP.PA"
 
 # Define the date range for data loading
 from <- as.POSIXct('2000-01-01', tz = "GMT")
-to <- from + 365 * 86400
+to <- from + 365 * 10 * 86400
 
 # todo: unsure if can load one day at a time and accumulate results under one symbol
 # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
@@ -52,8 +59,10 @@ colnames(daysDiff) <- c("date")
 daysDiff <- daysDiff %>% 
             transmute(date = as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) %>%
             mutate(wday(date)) %>% 
+            #mutate(isChristmas(date)) %>% 
             filter(wday(date) != 7) %>% 
-            filter(wday(date) != 1)
+            filter(wday(date) != 1) %>% 
+            filter(!isChristmas(date))
 daysDiff
 
 # Merge to detect missing days
