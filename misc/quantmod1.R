@@ -57,9 +57,10 @@ toPOSIXct <- function(x) as.POSIXct(x, tz='GMT', origin="1970-01-01")
 
 #daysDiff[wday(as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) != 6, ]
 daysDiff <- daysDiff %>% 
-            transmute(date = toPOSIXct(daysDiff$date)) %>% 
+            transmute(date = toPOSIXct(daysDiff$date)) %>%
+            mutate(wday(date)) %>% 
             filter(wday(date) != 7) %>% 
-            filter(wday(date) != 0)
+            filter(wday(date) != 1)
 
 #http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
 #as.POSIXct(956361600, tz='GMT', origin="1970-01-01")
