@@ -11,17 +11,18 @@ require(lubridate)
 library(dplyr)
 
 tmpenv <- new.env()
-# todo: there must be a better way ...
-#oneDay <- as.POSIXlt('2000-01-02', tz = "GMT") - as.POSIXlt('2000-01-01', tz = "GMT")
-
-symbol <- "AIRP.PA"
-from <- as.POSIXlt('2000-01-01', tz = "GMT")
-to <- as.POSIXlt('2000-12-31', tz = "GMT") #from + 5 * oneDay #364
-
 storageDir <- file.path("/datascience/marketdata/storage")
-
+# todo: set defaults
 #setSymbolLookup.FI(storage_method = "rda",
 #                   base_dir = file.path("/datascience/marketdata/storage"))
+
+symbol <- "AIRP.PA"
+
+# Define the date range for data loading
+from <- as.POSIXct('2000-01-01', tz = "GMT")
+to <- from + 365 * 86400
+
+# todo: unsure if can load one day at a time and accumulate results under one symbol
 # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
 
 result <- try(getSymbols(
@@ -35,77 +36,53 @@ result <- try(getSymbols(
             auto.assign = TRUE,
             verbose = TRUE))
 
-#daysCount <- to - from + 1
-#daysRange <- xts(rep(-1, daysCount) , seq(from = from, to = to, by = 'day'))
-daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
-#daysTraded <- unique(round(index(tmpenv$AIRP.PA), 'day'))
-# http://stackoverflow.com/questions/11325631/round-a-posix-date-posixct-with-base-r-functionality
-daysTraded <- unique(floor_date(index(tmpenv$AIRP.PA), "day"))
+symbolData = get(symbol, tmpenv)
 
+# Determine missing days
 # https://tonybreyal.wordpress.com/2011/11/29/outersect-the-opposite-of-rs-intersect-function/
-#daysDiff <- lapply(setdiff(daysRange, daysTraded), function(x) as.POSIXct(x, tz='GMT', origin="1970-01-01"))
-#cat("Missing days : ")
-#print(daysDiff, rownames=FALSE)
+daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
+daysTraded <- unique(floor_date(index(symbolData), "day"))
 
 daysDiff <- as.data.frame(setdiff(daysRange, daysTraded))
 colnames(daysDiff) <- c("date")
 
-#daysDiff[is.weekend(as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")), ]
 # Filter out Saturdays
 # http://stackoverflow.com/questions/9216138/find-the-day-of-a-week-in-r
-toPOSIXct <- function(x) as.POSIXct(x, tz='GMT', origin="1970-01-01")
-
-#daysDiff[wday(as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) != 6, ]
+#http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
 daysDiff <- daysDiff %>% 
-            transmute(date = toPOSIXct(daysDiff$date)) %>%
+            transmute(date = as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) %>%
             mutate(wday(date)) %>% 
             filter(wday(date) != 7) %>% 
             filter(wday(date) != 1)
-
-#http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
-#as.POSIXct(956361600, tz='GMT', origin="1970-01-01")
-
-
-#tmpenv$ORAN.PA <- na.omit(getSymbols(
-#    symbol,
-#    from = from,
-#    to = to,
-#    src = "FI",
-#    env = tmpenv,
-#    dir = storageDir,
-#    etension = "RData",
-#    auto.assign = FALSE,
-#    verbose = TRUE))
-
-# tmpenv$ORAN.PA [tmpenv$ORAN.PA$Price < 128.3] # 5 rows
+daysDiff
 
 # Merge to detect missing days
 # http://artax.karlin.mff.cuni.cz/r-help/library/xts/html/merge.html
 # http://stackoverflow.com/a/4139124/4032515
-tmpenv$allDays <- xts( , as.Date(from:to))
+#tmpenv$allDays <- xts( , as.Date(from:to))
 # Build an xts for all days of the year from endpoints of real trade data (not aligned to day endpoint!)
-ep <- index(tmpenv$ORAN.PA[endpoints(tmpenv$ORAN.PA, on = 'days', k = 1)])
-tmpenv$allTradedDays <- xts(rep(-1, length(ep)) , ep)
+#ep <- index(tmpenv$ORAN.PA[endpoints(tmpenv$ORAN.PA, on = 'days', k = 1)])
+#tmpenv$allTradedDays <- xts(rep(-1, length(ep)) , ep)
                       
 #tmpenv$ORAN_PA_Daily <- index(to.daily(tmpenv$ORAN.PA[, 1:2]))
 #tmpenv$allDays <- xts( , index(to.daily(tmpenv$ORAN.PA[, 1:2])))
 
-tmp <- merge(tmpenv$allDays, tmpenv$ORAN.PA, fill = -2)
-tmp
+#tmp <- merge(tmpenv$allDays, tmpenv$ORAN.PA, fill = -2)
+#tmp
 # http://stackoverflow.com/a/1686614/4032515
 
-tmp [tmp$Price == -1 ]
+#tmp [tmp$Price == -1 ]
 
-has.Vo(tmpenv$ORAN.PA)
-has.Ask(tmpenv$ORAN.PA)
-has.Bid(tmpenv$ORAN.PA)
-has.HLC(tmpenv$ORAN.PA)
-#tmpenv$ORAN.PA['2013-07-01 09']
+has.Vo(symbolData)
+has.Ask(symbolData)
+has.Bid(symbolData)
+has.HLC(symbolData)
+#symbolData['2013-07-01 09']
 
-p <- periodicity(tmpenv$ORAN.PA)
+p <- periodicity(symbolData)
 unclass(p)
 
-head(tmpenv$ORAN.PA, n = 50)
+head(symbolData, n = 50)
 
 # Source: http://www.quantmod.com/examples/data/
 
@@ -114,7 +91,7 @@ head(tmpenv$ORAN.PA, n = 50)
 #ts <- align.time(ps, 60)
 
 # To OHLC
-ohlc <- to.period(tmpenv$ORAN.PA[, 1:2], period = "minutes", k = 1440)
+ohlc <- to.period(symbolData[, 1:2], period = "minutes", k = 1440)
 colnames(ohlc) <- c("Open", "High", "Low", "Close", "Volume")
 ohlc <- align.time(ohlc, 60)
 
