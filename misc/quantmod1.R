@@ -14,8 +14,8 @@ tmpenv <- new.env()
 #oneDay <- as.POSIXlt('2000-01-02', tz = "GMT") - as.POSIXlt('2000-01-01', tz = "GMT")
 
 symbol <- "AIRP.PA"
-from <- as.POSIXlt('2000-04-21', tz = "GMT")
-to <- as.POSIXlt('2000-04-26', tz = "GMT") #from + 5 * oneDay #364
+from <- as.POSIXlt('2000-01-01', tz = "GMT")
+to <- as.POSIXlt('2000-12-31', tz = "GMT") #from + 5 * oneDay #364
 
 storageDir <- file.path("/datascience/marketdata/storage")
 
@@ -42,7 +42,18 @@ daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
 daysTraded <- unique(floor_date(index(tmpenv$AIRP.PA), "day"))
 
 # https://tonybreyal.wordpress.com/2011/11/29/outersect-the-opposite-of-rs-intersect-function/
-setdiff(daysRange, daysTraded)
+#daysDiff <- lapply(setdiff(daysRange, daysTraded), function(x) as.POSIXct(x, tz='GMT', origin="1970-01-01"))
+#cat("Missing days : ")
+#print(daysDiff, rownames=FALSE)
+
+daysDiff <- as.data.frame(setdiff(daysRange, daysTraded))
+colnames(daysDiff) <- c("date")
+
+daysDiff[is.weekend(as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")), ]
+
+#http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
+  as.POSIXct(956361600, tz='GMT', origin="1970-01-01")
+
 
 #tmpenv$ORAN.PA <- na.omit(getSymbols(
 #    symbol,
