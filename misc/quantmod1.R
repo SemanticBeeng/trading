@@ -194,6 +194,9 @@ loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1])
 loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
 loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
 loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
+loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5])
+
+loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
 
 printStats(symbol)
 #getSymbol_Data(symbol)
