@@ -29,6 +29,9 @@ symbol <- "AIRP.PA"
 from <- as.POSIXct('2000-01-01', tz = "GMT")
 to <- from + 365 * 10 * 86400
 
+from <- as.POSIXct('2009-05-01', tz = "GMT")
+to <- as.POSIXct('2015-07-08', tz = "GMT")
+
 # todo: unsure if can load one day at a time and accumulate results under one symbol
 # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
 
