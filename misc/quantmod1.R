@@ -11,9 +11,6 @@ require(dplyr)
 require(lubridate)
 require(chron)
 
-tmpenv <- new.env()
-
-symbol <- "AIRP.PA"
 
 # Set defaults
 #setSymbolLookup.FI(storage_method = "rda",
@@ -21,12 +18,14 @@ symbol <- "AIRP.PA"
 #                   base_dir = file.path("/datascience/marketdata/storage"),
 #                   etension = "RData")
 
+###################################################################
 # Filtering
+###################################################################
 isChristmas <- function (x) {
   return (month(x) == 12) && (day(x) == 25 || day(x) == 26)
 }
 
-########################################################
+###################################################################
 # Produce the date ranges used for loading the data
 # Resources
 # http://stackoverflow.com/questions/11308367/error-in-my-code-object-of-type-closure-is-not-subsettable
@@ -34,6 +33,7 @@ isChristmas <- function (x) {
 # https://stat.ethz.ch/pipermail/r-help//2013-April/352482.html
 # http://stackoverflow.com/questions/11561856/add-new-row-to-dataframe
 # http://stackoverflow.com/questions/20689650/how-to-append-rows-to-an-r-data-frame
+###################################################################
 dateRanges <- function() {
 
   dummyDate <- as.POSIXct('1900-01-01', tz = "GMT")
@@ -56,104 +56,103 @@ dateRanges <- function() {
   df$to[15] <- as.POSIXct(paste(2000 + 15, '-07-08', sep = ""), tz = "GMT")
   df
 }
-dateRanges()
 
-#df <- data.frame(from, to, stringsAsFactors = FALSE)
-df <- data.frame(start = character(16), end = character(16), stringsAsFactors = FALSE)
+###################################################################
+# Load data for one symbol for a date range
+###################################################################
+loadSymbolForRange <- function(symbol, from, to) {
+  # todo: unsure if can load one day at a time and accumulate results under one symbol
+  # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
+  symbolEnv <- new.env()
 
-df[,1] <- as.POSIXct(df[,1])
-df[,2] <- as.POSIXct(df[,2])
+  # 1) Load symbol data
+  result <- try(getSymbols(
+              symbol,
+              from = from,
+              to = to,
+              src = "FI",
+              dir = file.path("/datascience/marketdata/storage"),
+              etension = "RData",
+              env = symbolEnv,
+              auto.assign = TRUE,
+              verbose = TRUE))
 
-y <- 0
-#f <- as.POSIXct(paste(2000 + y, '-01-01', sep = ""), tz = "GMT")
-f <- paste(2000 + y, '-01-01', sep = "")
-df$start[1] <- f
-df$end[1] <- f
+  # ... now available here
+  symbolData = get(symbol, symbolEnv)
+  
+  # 2) Determine days missing data
+  # https://tonybreyal.wordpress.com/2011/11/29/outersect-the-opposite-of-rs-intersect-function/
+  
+  daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
+  daysTraded <- unique(floor_date(index(symbolData), "day"))
+  
+  daysDiff <- as.data.frame(setdiff(daysRange, daysTraded))
+  colnames(daysDiff) <- c("date")
+  
+  # Filter out Saturdays, Sundays and Christmans
+  # http://stackoverflow.com/questions/9216138/find-the-day-of-a-week-in-r
+  # http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
+  daysDiff <- daysDiff %>% 
+    transmute(date = as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) %>%
+    mutate(wday(date)) %>% 
+    #mutate(isChristmas(date)) %>% 
+    filter(wday(date) != 7) %>% 
+    filter(wday(date) != 1) %>% 
+    filter(!isChristmas(date))
+  
+  symbolEnv$missingDays = daysDiff
+  
+  assign(symbol, symbolEnv, envir = globalenv())
+  
+  # Return the symbol data  
+  symbolData
+}
 
-df$start[2] <- f
-df$end[1] <- f 
+###################################################################
+# Get data
+###################################################################
+getSymbol_Data <- function(symbol) {
 
-x <- data.frame(date=as.POSIXct("2010-12-07 08:00:00"), value=NA)
-x$date[1] = as.POSIXct("2010-12-07 08:00:00")
-x$date[2] = as.POSIXct("2010-12-07 08:00:00")
+  symbolEnv <- get(symbol, globalenv())
+  get(symbol, symbolEnv)  
+}
 
+###################################################################
+# Get missing days
+###################################################################
+getSymbol_MissingsDays <- function(symbol) {
+  
+  symbolEnv <- get(symbol, globalenv())
+  symbolEnv$missingDays
+}
 
-# Define the date range for data loading
-from <- as.POSIXct('2000-01-01', tz = "GMT")
-to <- from + 365 * 10 * 86400
+###################################################################
+# Prints statistics
+###################################################################
+printStats <- function(symbol) {
 
-
-from <- as.POSIXct('2009-05-01', tz = "GMT")
-to <- as.POSIXct('2015-07-08', tz = "GMT")
-
-# todo: unsure if can load one day at a time and accumulate results under one symbol
-# http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
-
-result <- try(getSymbols(
-            symbol,
-            from = from,
-            to = to,
-            src = "FI",
-            dir = file.path("/datascience/marketdata/storage"),
-            etension = "RData",
-            env = tmpenv,
-            auto.assign = TRUE,
-            verbose = TRUE))
-
-symbolData = get(symbol, tmpenv)
-
-# Determine missing days
-# https://tonybreyal.wordpress.com/2011/11/29/outersect-the-opposite-of-rs-intersect-function/
-daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
-daysTraded <- unique(floor_date(index(symbolData), "day"))
-
-daysDiff <- as.data.frame(setdiff(daysRange, daysTraded))
-colnames(daysDiff) <- c("date")
-
-# Filter out Saturdays
-# http://stackoverflow.com/questions/9216138/find-the-day-of-a-week-in-r
-#http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
-daysDiff <- daysDiff %>% 
-            transmute(date = as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) %>%
-            mutate(wday(date)) %>% 
-            #mutate(isChristmas(date)) %>% 
-            filter(wday(date) != 7) %>% 
-            filter(wday(date) != 1) %>% 
-            filter(!isChristmas(date))
-daysDiff
-
-# Merge to detect missing days
-# http://artax.karlin.mff.cuni.cz/r-help/library/xts/html/merge.html
-# http://stackoverflow.com/a/4139124/4032515
-#tmpenv$allDays <- xts( , as.Date(from:to))
-# Build an xts for all days of the year from endpoints of real trade data (not aligned to day endpoint!)
-#ep <- index(tmpenv$ORAN.PA[endpoints(tmpenv$ORAN.PA, on = 'days', k = 1)])
-#tmpenv$allTradedDays <- xts(rep(-1, length(ep)) , ep)
-                      
-#tmpenv$ORAN_PA_Daily <- index(to.daily(tmpenv$ORAN.PA[, 1:2]))
-#tmpenv$allDays <- xts( , index(to.daily(tmpenv$ORAN.PA[, 1:2])))
-
-#tmp <- merge(tmpenv$allDays, tmpenv$ORAN.PA, fill = -2)
-#tmp
-# http://stackoverflow.com/a/1686614/4032515
-
-#tmp [tmp$Price == -1 ]
-
-has.Vo(symbolData)
-has.Ask(symbolData)
-has.Bid(symbolData)
-has.HLC(symbolData)
-#symbolData['2013-07-01 09']
-
-p <- periodicity(symbolData)
-unclass(p)
-
-head(symbolData, n = 50)
+  symbolData = getSymbol_Data(symbol)
+  
+  cat(paste("Symbol" , symbol, "has", nrow(symbolData), "rows :\n------------------------------\n"))
+  print(paste("has.Vo", has.Vo(symbolData)))
+  print(paste("has.Ask", has.Ask(symbolData)))
+  print(paste("has.Bid", has.Bid(symbolData)))
+  print(paste("has.HLC", has.HLC(symbolData)))
+        
+  #p <- periodicity(symbolData)
+  #unclass(p)
+  
+  print(head(symbolData, n = 50))
+  
+  cat("Missing days :\n------------------------------\n")
+  print(getSymbol_MissingsDays(symbol))
+}
 
 # Source: http://www.quantmod.com/examples/data/
 
-################################################################################
+###################################################################
 # To OHLC
+###################################################################
 toMinuteBars <- function(symbol, # : String
                          kMinutes # : int
                         ) {
@@ -161,7 +160,7 @@ toMinuteBars <- function(symbol, # : String
   #ps
   #ts <- align.time(ps, 60)
   
-  symbolData = get(symbol, tmpenv)
+  symbolData = getSymbol_Data(symbol)
 
   ohlc <- to.period(symbolData[, 1:2], period = "minutes", k = kMinutes)
   colnames(ohlc) <- c("Open", "High", "Low", "Close", "Volume")
@@ -171,14 +170,38 @@ toMinuteBars <- function(symbol, # : String
   ohlc
 }
 
-# Zoom interactivelly: http://www.quantmod.com/documentation/zoomChart.html
+###################################################################
+# Draw chart series
+# # Zoom interactivelly: http://www.quantmod.com/documentation/zoomChart.html
 #chartSeries(x = window(ohlc, start = c(2000, 1), end = c(2000, 2)), name = symbol, TA='addVo()')
-chartSeries(x = ohlc, name = symbol, TA= c(addVo()))
-zoomChart("2000-01::2000-05")
-zooom()
+###################################################################
+drawChart <- function(ohlc) {
+  
+  chartSeries(x = ohlc, name = symbol, TA= c(addVo()))
+  #zoomChart("2000-01::2000-05")
+  #zooom()
+}
 
-################################################################################
+###################################################################
+# Main program
+###################################################################
+
+
+symbol <- "AIRP.PA"
+dRanges = dateRanges()
+
+loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1])
+loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
+loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
+loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
+
+printStats(symbol)
+#getSymbol_Data(symbol)
+drawChart(toMinuteBars(symbol, 1440))
+
+###################################################################
 # googleVis charts
+###################################################################
 renderGoogleVisChart <- function(ohlc) {
 
   ohlc.df =data.frame(date = as.Date(index(ohlc)), 
