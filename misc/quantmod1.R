@@ -11,17 +11,15 @@ require(dplyr)
 require(lubridate)
 require(chron)
 
-
 # Set defaults
 #setSymbolLookup.FI(storage_method = "rda",
 #                   Symbols = c(symbol),
 #                   base_dir = file.path("/datascience/marketdata/storage"),
 #                   etension = "RData")
-
 ###################################################################
 # Filtering
 ###################################################################
-isChristmas <- function (x) {
+isHoliday <- function (x) {
   return (month(x) == 12) && (day(x) == 25 || day(x) == 26)
 }
 
@@ -40,16 +38,13 @@ dateRanges <- function() {
 
   df <- data.frame(y = 0:14, from = dummyDate, to = dummyDate, stringsAsFactors = FALSE)
   
-  # Change type after creation
-  # http://stackoverflow.com/a/4472094/4032515
-  #df[,1] <- as.POSIXct(df[,1])
-  #df[,2] <- as.POSIXct(df[,2])
+  for(y in 0:14) {
   
-  for(y in 0:14){
-  
-    from <- as.POSIXct(paste(2000 + y, '-01-01', sep = ""), tz = "GMT")
+    year <- 2000 + y
+    daysInYear <- if(leap_year(year)) 366 else 365
+    from <- as.POSIXct(paste(year, '-01-01', sep = ""), tz = "GMT")
     df$from[y+1] <- from
-    df$to[y+1] <- from + 1 * 365 * 86400
+    df$to[y+1] <- floor_date(from + daysInYear * 86400 - 1, "day")
   }
 
   df$from[15] <- as.POSIXct(paste(2000 + 15, '-01-01', sep = ""), tz = "GMT")
@@ -58,25 +53,62 @@ dateRanges <- function() {
 }
 
 ###################################################################
+# Get symbol data
+###################################################################
+getSymbol_Data <- function(symbol) {
+
+  symbolEnv <- get(symbol, globalenv())
+  get(symbol, symbolEnv)  
+}
+
+###################################################################
+# Get symbol environment
+###################################################################
+getSymbol_Env <- function(symbol) {
+  
+    if(exists(symbol, globalenv())) {
+      symbolEnv <- get(symbol, globalenv())
+    } else {
+      symbolEnv <- new.env()
+      assign(symbol, symbolEnv, envir = globalenv())
+      symbolEnv
+  }
+}
+
+###################################################################
+# Get symbol missing days
+###################################################################
+getSymbol_MissingsDays <- function(symbol) {
+  
+  symbolEnv <- get(symbol, globalenv())
+  symbolEnv$missingDays
+}
+
+###################################################################
 # Load data for one symbol for a date range
 ###################################################################
-loadSymbolForRange <- function(symbol, from, to) {
+loadSymbolForRange <- function(symbol # : String
+                               , from # : POSIXct
+                               , to # : POSIXct
+) {
+  
   # todo: unsure if can load one day at a time and accumulate results under one symbol
   # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
-  symbolEnv <- new.env()
-
+  
+  symbolEnv <- getSymbol_Env(symbol)
+  
   # 1) Load symbol data
   result <- try(getSymbols(
-              symbol,
-              from = from,
-              to = to,
-              src = "FI",
-              dir = file.path("/datascience/marketdata/storage"),
-              etension = "RData",
-              env = symbolEnv,
-              auto.assign = TRUE,
-              verbose = TRUE))
-
+    symbol,
+    from = from,
+    to = to,
+    src = "FI",
+    dir = file.path("/datascience/marketdata/storage"),
+    etension = "RData",
+    env = symbolEnv,
+    auto.assign = TRUE,
+    verbose = TRUE))
+  
   # ... now available here
   symbolData = get(symbol, symbolEnv)
   
@@ -95,39 +127,24 @@ loadSymbolForRange <- function(symbol, from, to) {
   daysDiff <- daysDiff %>% 
     transmute(date = as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) %>%
     mutate(wday(date)) %>% 
-    #mutate(isChristmas(date)) %>% 
+    #mutate(isHoliday(date)) %>% 
     filter(wday(date) != 7) %>% 
     filter(wday(date) != 1) %>% 
-    filter(!isChristmas(date))
+    filter(!isHoliday(date))
   
-  symbolEnv$missingDays = daysDiff
-  
-  assign(symbol, symbolEnv, envir = globalenv())
+  print(paste("Found missing days ", nrow(daysDiff)))
+  if(is.null(symbolEnv$missingDays)) {
+    symbolEnv$missingDays = daysDiff
+  } else {
+    symbolEnv$missingDays = rbind(symbolEnv$missingDays, daysDiff)
+  }
   
   # Return the symbol data  
-  symbolData
+  #get(symbol, symbolEnv)
 }
 
 ###################################################################
-# Get data
-###################################################################
-getSymbol_Data <- function(symbol) {
-
-  symbolEnv <- get(symbol, globalenv())
-  get(symbol, symbolEnv)  
-}
-
-###################################################################
-# Get missing days
-###################################################################
-getSymbol_MissingsDays <- function(symbol) {
-  
-  symbolEnv <- get(symbol, globalenv())
-  symbolEnv$missingDays
-}
-
-###################################################################
-# Prints statistics
+# Print symbol statistics
 ###################################################################
 printStats <- function(symbol) {
 
@@ -199,7 +216,7 @@ loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5])
 loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
 
 printStats(symbol)
-#getSymbol_Data(symbol)
+class(getSymbol_Data(symbol))
 drawChart(toMinuteBars(symbol, 1440))
 
 ###################################################################
