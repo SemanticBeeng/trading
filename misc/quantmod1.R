@@ -89,13 +89,9 @@ ChristmasDays = data.frame(year =  c(2000, 2000, 2001, 2001, 2002, 2002, 2003, 2
                            day =   c(  21,   24,   13,   16,   29,    1,   18,   21,    9,   12,   25,   28,   14,   17,    6,    9,   21,   24,   10,   13,    2,    5,   22,   25,    6,    9,   29,    1,   18,   21,    3,    6)
                            )
 isHoliday <- function (x) {
-  isIt <- 
     ((month(x) == 1) && (day(x) == 1)) ||
     ((month(x) == 12) && (day(x) == 25 || day(x) == 26 || day(x) == 31)) ||
     (nrow(dplyr::intersect(data.frame(year = year(x), month = month(x), day = as.numeric(day(x))), ChristmasDays)) == 1)
-  
-  print(paste(x, "is holiday", isIt))
-  isIt
 }
 
 ###################################################################
@@ -169,7 +165,7 @@ loadSymbolForRange <- function(symbol # : String
   
   # todo: unsure if can load one day at a time and accumulate results under one symbol
   # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
-  print(paste("\nLoading symbol", symbol, "for range", from, ":", to))
+  writeLines(paste("\nLoading symbol", symbol, "for range", from, ":", to))
   
   symbolEnv <- getSymbol_Env(symbol)
   
@@ -208,7 +204,7 @@ loadSymbolForRange <- function(symbol # : String
     filter(wday(date) != 1) %>% 
     filter(isHoliday == FALSE)
   
-  print(paste("Days traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
+  writeLines(paste("Days traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
 
   if(is.null(symbolEnv$missingDays)) {
     symbolEnv$missingDays = 0
@@ -230,12 +226,12 @@ printStats <- function(symbol, extended = FALSE) {
 
   symbolData = getSymbol_Data(symbol)
   
-  print(paste("Symbol" , symbol, "has", nrow(symbolData), "rows :\n------------------------------\n"))
+  writeLines(paste("Symbol" , symbol, "has", nrow(symbolData), "rows :\n------------------------------\n"))
 
-  print(paste("has.Vo", has.Vo(symbolData)))
-  print(paste("has.Ask", has.Ask(symbolData)))
-  print(paste("has.Bid", has.Bid(symbolData)))
-  print(paste("has.HLC", has.HLC(symbolData)))
+  writeLines(paste("has.Vo", has.Vo(symbolData)))
+  writeLines(paste("has.Ask", has.Ask(symbolData)))
+  writeLines(paste("has.Bid", has.Bid(symbolData)))
+  writeLines(paste("has.HLC", has.HLC(symbolData)))
         
   #p <- periodicity(symbolData)
   #unclass(p)
@@ -243,8 +239,8 @@ printStats <- function(symbol, extended = FALSE) {
   #print(head(symbolData, n = 50))
 
   if(extended) {
-    print("Missing days :\n------------------------------\n")
-    print(getSymbol_MissingsDays(symbol))
+    writeLines("Missing days :\n------------------------------\n")
+    writeLines(getSymbol_MissingsDays(symbol))
   }
 }
 
@@ -294,7 +290,21 @@ loadSymbol <- function(symbol) {
   # http://stackoverflow.com/questions/16714020/loop-through-data-frame-and-variable-names
   # 
   loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1])
-
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
+  
 #  lapply(dRanges, FUN = function (dr) { 
 #      #print(class(dr[2]))
 #      #print(dr[3])
