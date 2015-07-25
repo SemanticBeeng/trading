@@ -210,12 +210,12 @@ loadSymbolForRange <- function(symbol # : String
   
   print(paste("Days traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
 
+  if(is.null(symbolEnv$missingDays)) {
+    symbolEnv$missingDays = 0
+  }
+  
   if(nrow(daysDiff) != 0) {
-    if(is.null(symbolEnv$missingDays)) {
-      symbolEnv$missingDays = daysDiff
-    } else {
-      symbolEnv$missingDays = rbind(symbolEnv$missingDays, daysDiff)
-    }
+    symbolEnv$missingDays = dplyr::rbind(symbolEnv$missingDays, daysDiff)
   }
   
   printStats(symbol)
