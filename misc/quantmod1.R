@@ -77,10 +77,24 @@ symbols = data.frame(symbol = c("AEGN.AS",
 #                   base_dir = file.path("/datascience/marketdata/storage"),
 #                   etension = "RData")
 ###################################################################
-# Filtering
+# Is a Holiday
+# http://rpackages.ianhowson.com/cran/dplyr/man/setops.html
+# http://stackoverflow.com/questions/22767893/find-number-of-rows-using-dplyr-group-by
 ###################################################################
+# https://www.euronext.com/trading-calendars-hours
+# https://www.euronext.com/en/holidays-and-hours
+# http://chronos-st.blogspot.ro/2008/03/easter-dates-from-2000-to-2020.html
+ChristmasDays = data.frame(year =  c(2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 2005, 2005, 2006, 2006, 2007, 2007, 2008, 2008, 2009, 2009, 2010, 2010, 2011, 2011, 2012, 2012, 2013, 2013, 2014, 2014, 2015, 2015), 
+                           month = c(   4,    4,    4,    4,    3,    4,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    4,    4,    4,    4,    3,    4,    4,    4,    4,    4), 
+                           day =   c(  21,   24,   13,   16,   29,    1,   18,   21,    9,   12,   25,   28,   14,   17,    6,    9,   21,   24,   10,   13,    2,    5,   22,   25,    6,    9,   29,    1,   18,   21,    3,    6)
+                           )
 isHoliday <- function (x) {
-  return (month(x) == 12) && (day(x) == 25 || day(x) == 26)
+  return 
+    ((month(x) == 1) && (day(x) == 1)) ||
+    ((month(x) == 5) && (day(x) == 1)) ||
+    ((month(x) == 12) && (day(x) == 25 || day(x) == 26 || day(x) == 31)) ||
+    # is Christmas day
+    nrow(dplyr::intersect(data.frame(year = year(x), month = month(x), day = as.numeric(day(x))), ChristmasDays)) == 1
 }
 
 ###################################################################
@@ -309,8 +323,7 @@ loadSymbol <- function(symbol) {
 # Main program
 ###################################################################
 
-
-symbol <- "AIRP.PA"
+symbol <- "ALVG.DE"
 
 loadSymbol(symbol)
 
