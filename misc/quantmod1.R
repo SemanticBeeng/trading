@@ -17,11 +17,11 @@ require(chron)
 
 YEAR_RANGE <- 1:15
 
-symbols = data.frame(symbol = c("AEGN.AS",
-                                "AIRP.PA",
-                                "ALSO.PA",
-                                "ALVG.DE",
-                                "AXAF.PA",
+symbols = data.frame(symbol = c("AEGN.AS", # all
+                                "AIRP.PA", # all
+                                "ALSO.PA", # all
+                                "ALVG.DE", # all
+                                "AXAF.PA", # all
                                 "BASF.DE",
                                 "BAYG.DE",
                                 "BBVA.MC",
@@ -84,14 +84,29 @@ symbols = data.frame(symbol = c("AEGN.AS",
 # https://www.euronext.com/trading-calendars-hours
 # https://www.euronext.com/en/holidays-and-hours
 # http://chronos-st.blogspot.ro/2008/03/easter-dates-from-2000-to-2020.html
-ChristmasDays = data.frame(year =  c(2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 2005, 2005, 2006, 2006, 2007, 2007, 2008, 2008, 2009, 2009, 2010, 2010, 2011, 2011, 2012, 2012, 2013, 2013, 2014, 2014, 2015, 2015), 
+# http://stackoverflow.com/questions/6558921/r-boolean-operators-and
+# http://stackoverflow.com/questions/26611717/can-dplyr-join-on-multiple-columns-or-composite-key
+Holidays = data.frame(year =  c(2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 2005, 2005, 2006, 2006, 2007, 2007, 2008, 2008, 2009, 2009, 2010, 2010, 2011, 2011, 2012, 2012, 2013, 2013, 2014, 2014, 2015, 2015), 
                            month = c(   4,    4,    4,    4,    3,    4,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    4,    4,    4,    4,    3,    4,    4,    4,    4,    4), 
                            day =   c(  21,   24,   13,   16,   29,    1,   18,   21,    9,   12,   25,   28,   14,   17,    6,    9,   21,   24,   10,   13,    2,    5,   22,   25,    6,    9,   29,    1,   18,   21,    3,    6)
                            )
+Holidays = Holidays %>% mutate(isHoliday = TRUE)
 isHoliday <- function (x) {
-    ((month(x) == 1) && (day(x) == 1)) ||
-    ((month(x) == 12) && (day(x) == 25 || day(x) == 26 || day(x) == 31)) ||
-    (nrow(dplyr::intersect(data.frame(year = year(x), month = month(x), day = as.numeric(day(x))), ChristmasDays)) == 1)
+  
+    xdf <- as.data.frame(x) %>% 
+      mutate(year = year(x), month = month(x), day = as.numeric(day(x))) #%>%
+      #select(-x)
+    isHoliday <- (left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% select(isHoliday))[,1]
+    #left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% collect %>% .[["Holidays"]]
+    #anti_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day"))
+    
+    isIt <- 
+      (month(x) ==  1) & (day(x) ==  1) |
+      (month(x) == 12) & (day(x) == 25 | day(x) == 26 | day(x) == 31) |
+      isHoliday
+
+    print(isIt)
+    isIt
 }
 
 ###################################################################
@@ -211,7 +226,7 @@ loadSymbolForRange <- function(symbol # : String
   }
   
   if(nrow(daysDiff) != 0) {
-    symbolEnv$missingDays = dplyr::rbind(symbolEnv$missingDays, daysDiff)
+    symbolEnv$missingDays = rbind(symbolEnv$missingDays, daysDiff)
   }
   
   printStats(symbol)
@@ -239,8 +254,7 @@ printStats <- function(symbol, extended = FALSE) {
   #print(head(symbolData, n = 50))
 
   if(extended) {
-    writeLines("Missing days :\n------------------------------\n")
-    writeLines(getSymbol_MissingsDays(symbol))
+    writeLines(paste("Missing days :", getSymbol_MissingsDays(symbol), "\n------------------------------\n"))
   }
 }
 
@@ -290,20 +304,20 @@ loadSymbol <- function(symbol) {
   # http://stackoverflow.com/questions/16714020/loop-through-data-frame-and-variable-names
   # 
   loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14])
+#  loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
   
 #  lapply(dRanges, FUN = function (dr) { 
 #      #print(class(dr[2]))
@@ -322,7 +336,11 @@ loadSymbol <- function(symbol) {
 # Main program
 ###################################################################
 
-symbol <- "ALVG.DE"
+symbol <- "AEGN.AS" # all
+symbol <- "AIRP.PA" # all
+symbol <- "ALVG.DE" # all
+symbol <- "ALSO.PA" # all
+symbol <- "AXAF.PA" # all
 
 loadSymbol(symbol)
 
