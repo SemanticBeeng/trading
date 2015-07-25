@@ -89,12 +89,13 @@ ChristmasDays = data.frame(year =  c(2000, 2000, 2001, 2001, 2002, 2002, 2003, 2
                            day =   c(  21,   24,   13,   16,   29,    1,   18,   21,    9,   12,   25,   28,   14,   17,    6,    9,   21,   24,   10,   13,    2,    5,   22,   25,    6,    9,   29,    1,   18,   21,    3,    6)
                            )
 isHoliday <- function (x) {
-  return 
+  isIt <- 
     ((month(x) == 1) && (day(x) == 1)) ||
-    ((month(x) == 5) && (day(x) == 1)) ||
     ((month(x) == 12) && (day(x) == 25 || day(x) == 26 || day(x) == 31)) ||
-    # is Christmas day
-    nrow(dplyr::intersect(data.frame(year = year(x), month = month(x), day = as.numeric(day(x))), ChristmasDays)) == 1
+    (nrow(dplyr::intersect(data.frame(year = year(x), month = month(x), day = as.numeric(day(x))), ChristmasDays)) == 1)
+  
+  print(paste(x, "is holiday", isIt))
+  isIt
 }
 
 ###################################################################
@@ -168,7 +169,7 @@ loadSymbolForRange <- function(symbol # : String
   
   # todo: unsure if can load one day at a time and accumulate results under one symbol
   # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
-  print(paste("Loading symbol", symbol, "for range", from, ":", to))
+  print(paste("\nLoading symbol", symbol, "for range", from, ":", to))
   
   symbolEnv <- getSymbol_Env(symbol)
   
@@ -193,7 +194,7 @@ loadSymbolForRange <- function(symbol # : String
   daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
   daysTraded <- unique(floor_date(index(symbolData), "day"))
   
-  daysDiff <- as.data.frame(setdiff(daysRange, daysTraded))
+  daysDiff <- as.data.frame(dplyr::setdiff(daysRange, daysTraded))
   colnames(daysDiff) <- c("date")
   
   # Filter out Saturdays, Sundays and Christmans
