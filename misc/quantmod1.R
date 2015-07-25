@@ -100,6 +100,8 @@ isHoliday <- function (x) {
       mutate(year = year(x), month = month(x), day = as.numeric(day(x))) #%>%
       #select(-x)
     isHoliday <- left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% .$isHoliday
+    #isHoliday <- transform(isHoliday, isHoliday2 = ifelse(is.na('isHoliday'), FALSE, isHoliday)) %>% .$isHoliday2
+    
     #isHoliday <- (left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% select(isHoliday))[,1]
     #left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% collect %>% .[["Holidays"]]
     #anti_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day"))
