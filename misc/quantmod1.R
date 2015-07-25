@@ -202,18 +202,20 @@ loadSymbolForRange <- function(symbol # : String
   # http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
   daysDiff <- daysDiff %>% 
     transmute(date = as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) %>%
-    mutate(wday(date)) %>% 
-    #mutate(isHoliday(date)) %>% 
+    mutate(wday = wday(date)) %>% 
+    mutate(isHoliday = isHoliday(date)) %>% 
     filter(wday(date) != 7) %>% 
     filter(wday(date) != 1) %>% 
-    filter(!isHoliday(date))
+    filter(isHoliday == FALSE)
   
   print(paste("Days traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
 
-  if(is.null(symbolEnv$missingDays)) {
-    symbolEnv$missingDays = daysDiff
-  } else {
-    symbolEnv$missingDays = rbind(symbolEnv$missingDays, daysDiff)
+  if(nrow(daysDiff) != 0) {
+    if(is.null(symbolEnv$missingDays)) {
+      symbolEnv$missingDays = daysDiff
+    } else {
+      symbolEnv$missingDays = rbind(symbolEnv$missingDays, daysDiff)
+    }
   }
   
   printStats(symbol)
@@ -292,20 +294,6 @@ loadSymbol <- function(symbol) {
   # http://stackoverflow.com/questions/16714020/loop-through-data-frame-and-variable-names
   # 
   loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
 
 #  lapply(dRanges, FUN = function (dr) { 
 #      #print(class(dr[2]))
