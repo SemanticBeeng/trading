@@ -268,7 +268,7 @@ printStats <- function(symbol, extended = FALSE) {
 
   if(extended) {
     cat("\n")
-    cat(paste("Missing days :", getSymbol_MissingsDays(symbol), "\n")) 
+    cat(paste("Missing days :", getSymbol_MissingsDays(symbol)[,1], "\n")) 
     cat("------------------------------")
   }
 }
@@ -276,7 +276,7 @@ printStats <- function(symbol, extended = FALSE) {
 # Source: http://www.quantmod.com/examples/data/
 
 ###################################################################
-# To OHLC
+# To minute OHLC bars
 ###################################################################
 toMinuteBars <- function(symbol, # : String
                          kMinutes # : int
@@ -290,6 +290,36 @@ toMinuteBars <- function(symbol, # : String
   ohlc <- to.period(symbolData[, 1:2], period = "minutes", k = kMinutes)
   colnames(ohlc) <- c("Open", "High", "Low", "Close", "Volume")
 
+  ohlc <- align.time(ohlc, 60)
+  
+  ohlc
+}
+
+###################################################################
+# To daily OHLC bars
+# for US equities, you'd
+
+#- shift the indexTZ timezone to US eastern time,
+#- and then do x['T09:00/TT16:00'] to get regular market hours, and then
+#- do to.daily on that data
+#- shift the indexTZ timezone back to GMT
+###################################################################
+toDailyBars <- function(symbol # : String
+                      ) {
+  symbolData = getSymbol_Data(symbol)
+  
+  #format(symbolData, tz="Europe/Germany", usetz=TRUE)
+  currentTZ <- indexTZ(symbolData)
+  indexTZ(symbolData) <- "Europe/Germany"
+
+  # http://stackoverflow.com/questions/11871572/subsetting-tricks-for-xts-in-r
+  symbolDataTmp <- symbolData['T09:00/T16:00']
+    
+  ohlc <- to.daily(symbolDataTmp[, 1:2])
+  indexTZ(symbolData) <- currentTZ
+  
+  colnames(ohlc) <- c("Open", "High", "Low", "Close", "Volume")
+  
   ohlc <- align.time(ohlc, 60)
   
   ohlc
@@ -344,6 +374,16 @@ loadSymbol <- function(symbol) {
 #    loadSymbolForRange(symbol = symbol, from = dr$from, to = dr$to)
 #    
 #  }  
+  
+  symbolEnv <- getSymbol_Env(symbol)
+  
+  symbolEnv$minuteBars05 = toMinuteBars(symbol,  5)
+  symbolEnv$minuteBars10 = toMinuteBars(symbol, 10)
+  symbolEnv$minuteBars20 = toMinuteBars(symbol, 20)
+  symbolEnv$minuteBars30 = toMinuteBars(symbol, 30)
+  symbolEnv$minuteBars60 = toMinuteBars(symbol, 60)
+  symbolEnv$dailyBars    = toDailyBars(symbol)
+  
   printStats(symbol)
 }
 
@@ -351,11 +391,14 @@ loadSymbol <- function(symbol) {
 # Main program
 ###################################################################
 
+# http://stackoverflow.com/questions/11890600/time-zone-period-apply-in-xts-using-r
+Sys.setenv(TZ="GMT")
+
 symbol <- "AEGN.AS" # all
-symbol <- "AIRP.PA" # all
-symbol <- "ALVG.DE" # all
-symbol <- "ALSO.PA" # all
-symbol <- "AXAF.PA" # all
+#symbol <- "AIRP.PA" # all
+#symbol <- "ALVG.DE" # all
+#symbol <- "ALSO.PA" # all
+#symbol <- "AXAF.PA" # all
 
 loadSymbol(symbol)
 
