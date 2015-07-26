@@ -160,7 +160,7 @@ loadSymbolForRange <- function(symbol # : String
     from = from,
     to = to,
     src = "FI",
-    dir = file.path("/datascience/marketdata/storage"),
+    dir = file.path("/datascience/marketdata/storage/tick"),
     etension = "RData",
     env = symbolEnv,
     auto.assign = TRUE,
@@ -423,11 +423,13 @@ loadSymbol <- function(symbol) {
 # http://stackoverflow.com/questions/11890600/time-zone-period-apply-in-xts-using-r
 Sys.setenv(TZ="GMT")
 
-symbol <- "AEGN.AS" # all
+#symbol <- "AEGN.AS" # all
 #symbol <- "AIRP.PA" # all
 #symbol <- "ALVG.DE" # all
 #symbol <- "ALSO.PA" # all
 #symbol <- "AXAF.PA" # all
+
+symbol <- "ORAN.PA"
 
 loadSymbol(symbol)
 
