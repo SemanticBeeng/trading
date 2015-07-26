@@ -16,6 +16,7 @@ require(lubridate)
 require(chron)
 
 Config_MissingDays <- FALSE
+Config_AggregateBars <- TRUE
 
 YEAR_COUNT <- 15
 
@@ -149,7 +150,7 @@ loadSymbolForRange <- function(symbol # : String
   
   # todo: unsure if can load one day at a time and accumulate results under one symbol
   # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
-  writeLines(paste("\nLoading symbol", symbol, "for range", from, ":", to, "..."))
+  cat(paste("\nLoading symbol", symbol, "for range", from, ":", to, "..."))
   
   symbolEnv <- getSymbol_Env(symbol)
   
@@ -165,7 +166,7 @@ loadSymbolForRange <- function(symbol # : String
     auto.assign = TRUE,
     verbose = FALSE))
   
-  writeLines("Done loading.")
+  cat("\nDone loading.\n")
 
   # ... now available here
   symbolData = get(symbol, symbolEnv)
@@ -175,7 +176,7 @@ loadSymbolForRange <- function(symbol # : String
     determineMissingDays(symbol, from, to)
   }
   
-  printStats(symbol)
+  printStats(symbol) 
   # Return the symbol data  
   #get(symbol, symbolEnv)
 }
@@ -231,7 +232,7 @@ isHoliday <- function (x) {
 ###################################################################
 determineMissingDays <- function(symbol, from, to) {
 
-  writeLines("\nCalculating missing days...")
+  cat("\nCalculating missing days...")
   
   symbolEnv <- getSymbol_Env(symbol)
   symbolData = get(symbol, symbolEnv)
@@ -254,7 +255,7 @@ determineMissingDays <- function(symbol, from, to) {
     filter(is.na(isHoliday)) %>%
     select(date, wday)
   
-  writeLines(paste("Days traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
+  cat(paste("\nDays traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
   
   #  if(is.null(symbolEnv$missingDays)) {
   #    symbolEnv$missingDays = 0
@@ -272,21 +273,21 @@ printStats <- function(symbol, extended = FALSE) {
 
   symbolData = getSymbol_Data(symbol)
   
-  writeLines(paste("Symbol" , symbol, "has", nrow(symbolData), "rows :\n------------------------------\n"))
+  cat(paste("\nSymbol" , symbol, "has", nrow(symbolData), "rows :\n------------------------------\n"))
 
-  writeLines(paste("has.Vo", has.Vo(symbolData)))
-  writeLines(paste("has.Ask", has.Ask(symbolData)))
-  writeLines(paste("has.Bid", has.Bid(symbolData)))
-  writeLines(paste("has.HLC", has.HLC(symbolData)))
+  cat(paste("\n",
+            "has.Vo", has.Vo(symbolData), 
+            "has.Ask", has.Ask(symbolData),
+            "has.Bid", has.Bid(symbolData),
+            "has.HLC", has.HLC(symbolData)))
         
   #p <- periodicity(symbolData)
   #unclass(p)
   
   #print(head(symbolData, n = 50))
 
-  if(extended) {
-    cat("\n")
-    cat(paste("Missing days :", getSymbol_MissingsDays(symbol)[,1], "\n")) 
+  if(extended && Config_MissingDays) {
+    cat(paste("\nMissing days :", getSymbol_MissingsDays(symbol)[,1], "\n")) 
     cat("------------------------------")
   }
 }
@@ -299,10 +300,8 @@ printStats <- function(symbol, extended = FALSE) {
 toMinuteBars <- function(symbol, # : String
                          kMinutes # : int
                         ) {
-  #ps <- period.sum(tmpenv$ORAN.PA[, 1], endpoints(tmpenv$ORAN.PA, on = "minutes", k = 1)); 
-  #ps
-  #ts <- align.time(ps, 60)
-  
+
+  cat(paste("\ntoMinuteBars for ", symbol, "minutes: ", kMinutes, "..."))
   symbolData = getSymbol_Data(symbol)
 
   ohlc <- to.period(symbolData[, 1:2], period = "minutes", k = kMinutes)
@@ -310,6 +309,7 @@ toMinuteBars <- function(symbol, # : String
 
   ohlc <- align.time(ohlc, 60)
   
+  cat("\nDone.\n")
   ohlc
 }
 
@@ -321,16 +321,24 @@ toMinuteBars <- function(symbol, # : String
 #- and then do x['T09:00/TT16:00'] to get regular market hours, and then
 #- do to.daily on that data
 #- shift the indexTZ timezone back to GMT
+
+# http://blog.revolutionanalytics.com/2009/06/converting-time-zones.html **??
+# http://www.r-bloggers.com/time-zones/
 ###################################################################
 toDailyBars <- function(symbol # : String
                       ) {
+
+  cat(paste("\ntoDailyBars for ", symbol, "..."))
+  
   symbolData = getSymbol_Data(symbol)
   
-  #format(symbolData, tz="Europe/Germany", usetz=TRUE)
   currentTZ <- indexTZ(symbolData)
   indexTZ(symbolData) <- "Europe/Germany"
 
   # http://stackoverflow.com/questions/11871572/subsetting-tricks-for-xts-in-r
+  # http://stats.stackexchange.com/questions/12980/subset-data-by-month-in-r
+  # http://stackoverflow.com/questions/15602187/how-to-use-the-index-of-an-xts-object-to-subset-another-xts-object
+  
   symbolDataTmp <- symbolData['T09:00/T16:00']
     
   ohlc <- to.daily(symbolDataTmp[, 1:2])
@@ -340,6 +348,7 @@ toDailyBars <- function(symbol # : String
   
   ohlc <- align.time(ohlc, 60)
   
+  cat("\nDone.\n")
   ohlc
 }
 
@@ -396,14 +405,15 @@ loadSymbol <- function(symbol) {
   
   symbolEnv <- getSymbol_Env(symbol)
   
-  symbolEnv$minuteBars05 = toMinuteBars(symbol,  5)
-  symbolEnv$minuteBars10 = toMinuteBars(symbol, 10)
-  symbolEnv$minuteBars20 = toMinuteBars(symbol, 20)
-  symbolEnv$minuteBars30 = toMinuteBars(symbol, 30)
-  symbolEnv$minuteBars60 = toMinuteBars(symbol, 60)
-  symbolEnv$dailyBars    = toDailyBars(symbol)
-  
-  printStats(symbol)
+  if(Config_AggregateBars) {
+    symbolEnv$minuteBars05 = toMinuteBars(symbol,  5)
+    symbolEnv$minuteBars10 = toMinuteBars(symbol, 10)
+    symbolEnv$minuteBars20 = toMinuteBars(symbol, 20)
+    symbolEnv$minuteBars30 = toMinuteBars(symbol, 30)
+    symbolEnv$minuteBars60 = toMinuteBars(symbol, 60)
+    symbolEnv$dailyBars    = toDailyBars(symbol)
+  }
+
 }
 
 ###################################################################
@@ -420,6 +430,9 @@ symbol <- "AEGN.AS" # all
 #symbol <- "AXAF.PA" # all
 
 loadSymbol(symbol)
+
+cat("\n----------------------\n")
+cat("\nExtensive statistics.\n")
 
 printStats(symbol, TRUE)
 
