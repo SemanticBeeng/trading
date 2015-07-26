@@ -15,7 +15,9 @@ require(dplyr)
 require(lubridate)
 require(chron)
 
-YEAR_RANGE <- 1:15
+Config_MissingDays <- FALSE
+
+YEAR_COUNT <- 15
 
 symbols = data.frame(symbol = c("AEGN.AS", # all
                                 "AIRP.PA", # all
@@ -77,51 +79,6 @@ symbols = data.frame(symbol = c("AEGN.AS", # all
 #                   base_dir = file.path("/datascience/marketdata/storage"),
 #                   etension = "RData")
 ###################################################################
-# Is a Holiday
-# http://rpackages.ianhowson.com/cran/dplyr/man/setops.html
-# http://stackoverflow.com/questions/22767893/find-number-of-rows-using-dplyr-group-by
-###################################################################
-# https://www.euronext.com/trading-calendars-hours
-# https://www.euronext.com/en/holidays-and-hours
-# http://chronos-st.blogspot.ro/2008/03/easter-dates-from-2000-to-2020.html
-# http://stackoverflow.com/questions/6558921/r-boolean-operators-and
-# http://stackoverflow.com/questions/21888910/how-to-specify-names-of-columns-for-x-and-y-when-joining-in-dplyr
-# http://stackoverflow.com/questions/26611717/can-dplyr-join-on-multiple-columns-or-composite-key
-# http://stackoverflow.com/questions/21618423/extract-a-dplyr-tbl-column-as-a-vector
-# http://stackoverflow.com/questions/27149306/dplyrselect-one-column-and-output-as-vector **
-EasterDays = data.frame(year =  c(2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 2005, 2005, 2006, 2006, 2007, 2007, 2008, 2008, 2009, 2009, 2010, 2010, 2011, 2011, 2012, 2012, 2013, 2013, 2014, 2014, 2015, 2015), 
-                           month = c(   4,    4,    4,    4,    3,    4,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    4,    4,    4,    4,    3,    4,    4,    4,    4,    4), 
-                           day =   c(  21,   24,   13,   16,   29,    1,   18,   21,    9,   12,   25,   28,   14,   17,    6,    9,   21,   24,   10,   13,    2,    5,   22,   25,    6,    9,   29,    1,   18,   21,    3,    6)
-                           )
-EasterDays = EasterDays %>% mutate(isHoliday = TRUE)
-###################################################################
-isHoliday <- function (x) {
-  
-    # Create a data.frame by splitting the POSIXct into year, month and day
-    xdf <- as.data.frame(x) %>% 
-      mutate(year = year(x), month = month(x), day = as.numeric(day(x))) #%>%
-      #select(-x)
-    # Left join with holidays to mark the days that are in that set
-    isEasterDay <- left_join(xdf, EasterDays, by = c("year" = "year", "month" = "month", "day" = "day")) %>%
-      # extract the column with the desired value
-      .$isHoliday
-    #isHoliday <- transform(isHoliday, isHoliday2 = ifelse(is.na('isHoliday'), FALSE, isHoliday)) %>% .$isHoliday2
-    
-    #isHoliday <- (left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% select(isHoliday))[,1]
-    #left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% collect %>% .[["Holidays"]]
-    #anti_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day"))
-    
-    isIt <- 
-      (month(x) ==  1) & (day(x) ==  1) | # Jan 1st
-      (month(x) ==  5) & (day(x) ==  1) | # Labor day
-      (month(x) == 12) & (day(x) == 25 | day(x) == 26 | day(x) == 31) | # Christmas
-      isEasterDay # Easter
-
-    #print(isIt)
-    isIt
-}
-
-###################################################################
 # Produce the date ranges used for loading the data
 # Resources
 # http://stackoverflow.com/questions/11308367/error-in-my-code-object-of-type-closure-is-not-subsettable
@@ -134,9 +91,9 @@ dateRanges <- function() {
 
   dummyDate <- as.POSIXct('1900-01-01', tz = "GMT", origin="1970-01-01")
 
-  df <- data.frame(y = 0:14, from = dummyDate, to = dummyDate, stringsAsFactors = FALSE)
+  df <- data.frame(y = 0:YEAR_COUNT, from = dummyDate, to = dummyDate, stringsAsFactors = FALSE)
   
-  for(y in 0:14) {
+  for(y in 0:YEAR_COUNT) {
   
     year <- 2000 + y
     daysInYear <- if(leap_year(year)) 366 else 365
@@ -145,8 +102,8 @@ dateRanges <- function() {
     df$to[y+1] <- floor_date(from + daysInYear * 86400 - 1, "day")
   }
 
-  df$from[15] <- as.POSIXct(paste(2000 + 15, '-01-01', sep = ""), tz = "GMT", origin="1970-01-01")
-  df$to[15] <- as.POSIXct(paste(2000 + 15, '-07-08', sep = ""), tz = "GMT", origin="1970-01-01")
+  df$from[YEAR_COUNT + 1] <- as.POSIXct(paste(2000 + YEAR_COUNT, '-01-01', sep = ""), tz = "GMT", origin="1970-01-01")
+  df$to[YEAR_COUNT + 1] <- as.POSIXct(paste(2000 + YEAR_COUNT, '-07-08', sep = ""), tz = "GMT", origin="1970-01-01")
   df
 }
 
@@ -192,7 +149,7 @@ loadSymbolForRange <- function(symbol # : String
   
   # todo: unsure if can load one day at a time and accumulate results under one symbol
   # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
-  writeLines(paste("\nLoading symbol", symbol, "for range", from, ":", to))
+  writeLines(paste("\nLoading symbol", symbol, "for range", from, ":", to, "..."))
   
   symbolEnv <- getSymbol_Env(symbol)
   
@@ -208,11 +165,76 @@ loadSymbolForRange <- function(symbol # : String
     auto.assign = TRUE,
     verbose = FALSE))
   
+  writeLines("Done loading.")
+
   # ... now available here
   symbolData = get(symbol, symbolEnv)
   
   # 2) Determine days missing data
-  # https://tonybreyal.wordpress.com/2011/11/29/outersect-the-opposite-of-rs-intersect-function/
+  if(Config_MissingDays) {
+    determineMissingDays(symbol, from, to)
+  }
+  
+  printStats(symbol)
+  # Return the symbol data  
+  #get(symbol, symbolEnv)
+}
+
+###################################################################
+# Is a Holiday
+# http://rpackages.ianhowson.com/cran/dplyr/man/setops.html
+# http://stackoverflow.com/questions/22767893/find-number-of-rows-using-dplyr-group-by
+###################################################################
+# https://www.euronext.com/trading-calendars-hours
+# https://www.euronext.com/en/holidays-and-hours
+# http://chronos-st.blogspot.ro/2008/03/easter-dates-from-2000-to-2020.html
+# http://stackoverflow.com/questions/6558921/r-boolean-operators-and
+# http://stackoverflow.com/questions/21888910/how-to-specify-names-of-columns-for-x-and-y-when-joining-in-dplyr
+# http://stackoverflow.com/questions/26611717/can-dplyr-join-on-multiple-columns-or-composite-key
+# http://stackoverflow.com/questions/21618423/extract-a-dplyr-tbl-column-as-a-vector
+# http://stackoverflow.com/questions/27149306/dplyrselect-one-column-and-output-as-vector **
+EasterDays = data.frame(year =  c(2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 2005, 2005, 2006, 2006, 2007, 2007, 2008, 2008, 2009, 2009, 2010, 2010, 2011, 2011, 2012, 2012, 2013, 2013, 2014, 2014, 2015, 2015), 
+                        month = c(   4,    4,    4,    4,    3,    4,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    3,    3,    4,    4,    4,    4,    4,    4,    4,    4,    3,    4,    4,    4,    4,    4), 
+                        day =   c(  21,   24,   13,   16,   29,    1,   18,   21,    9,   12,   25,   28,   14,   17,    6,    9,   21,   24,   10,   13,    2,    5,   22,   25,    6,    9,   29,    1,   18,   21,    3,    6)
+)
+EasterDays = EasterDays %>% mutate(isHoliday = TRUE)
+###################################################################
+isHoliday <- function (x) {
+  
+  # Create a data.frame by splitting the POSIXct into year, month and day
+  xdf <- as.data.frame(x) %>% 
+    mutate(year = year(x), month = month(x), day = as.numeric(day(x))) #%>%
+  #select(-x)
+  # Left join with holidays to mark the days that are in that set
+  isEasterDay <- left_join(xdf, EasterDays, by = c("year" = "year", "month" = "month", "day" = "day")) %>%
+    # extract the column with the desired value
+    .$isHoliday
+  #isHoliday <- transform(isHoliday, isHoliday2 = ifelse(is.na('isHoliday'), FALSE, isHoliday)) %>% .$isHoliday2
+  
+  #isHoliday <- (left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% select(isHoliday))[,1]
+  #left_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day")) %>% collect %>% .[["Holidays"]]
+  #anti_join(xdf, Holidays, by = c("year" = "year", "month" = "month", "day" = "day"))
+  
+  isIt <- 
+    (month(x) ==  1) & (day(x) ==  1) | # Jan 1st
+    (month(x) ==  5) & (day(x) ==  1) | # Labor day
+    (month(x) == 12) & (day(x) == 25 | day(x) == 26 | day(x) == 31) | # Christmas
+    isEasterDay # Easter
+  
+  #print(isIt)
+  isIt
+}
+
+###################################################################
+# Determine missing days
+# https://tonybreyal.wordpress.com/2011/11/29/outersect-the-opposite-of-rs-intersect-function/
+###################################################################
+determineMissingDays <- function(symbol, from, to) {
+
+  writeLines("\nCalculating missing days...")
+  
+  symbolEnv <- getSymbol_Env(symbol)
+  symbolData = get(symbol, symbolEnv)
   
   daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
   daysTraded <- unique(floor_date(index(symbolData), "day"))
@@ -233,18 +255,14 @@ loadSymbolForRange <- function(symbol # : String
     select(date, wday)
   
   writeLines(paste("Days traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
-
-#  if(is.null(symbolEnv$missingDays)) {
-#    symbolEnv$missingDays = 0
-#  }
+  
+  #  if(is.null(symbolEnv$missingDays)) {
+  #    symbolEnv$missingDays = 0
+  #  }
   
   if(nrow(daysDiff) != 0) {
     symbolEnv$missingDays = rbind(symbolEnv$missingDays, daysDiff)
   }
-  
-  printStats(symbol)
-  # Return the symbol data  
-  #get(symbol, symbolEnv)
 }
 
 ###################################################################
@@ -363,6 +381,7 @@ loadSymbol <- function(symbol) {
   loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
+  loadSymbolForRange(symbol = symbol, from = dRanges$from[16], to = dRanges$to[16])
   
 #  lapply(dRanges, FUN = function (dr) { 
 #      #print(class(dr[2]))
