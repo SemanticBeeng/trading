@@ -15,64 +15,66 @@ require(dplyr)
 require(lubridate)
 require(chron)
 
-Config_MissingDays <- FALSE
-Config_AggregateBars <- TRUE
+Config_MissingDays <- TRUE
+Config_AggregateBars <- FALSE #TRUE
 
+STORAGE_ROOT = "/datascience/marketdata/storage"
 YEAR_COUNT <- 15
 
-symbols = data.frame(symbol = c("AEGN.AS", # all
-                                "AIRP.PA", # all
-                                "ALSO.PA", # all
-                                "ALVG.DE", # all
-                                "AXAF.PA", # all
-                                "BASF.DE",
-                                "BAYG.DE",
-                                "BBVA.MC",
-                                "BNPP.PA",
-                                "CAGR.PA",
-                                "CARR.PA",
-                                "CRDI.MI",
-                                "CRH.I",
-                                "DANO.PA",
-                                "DB1Gn.DE",
-                                "DBKGn.DE",
-                                "DCXGn.DE",
-                                "DTEGn.DE",
-                                "ENEI.M",
-                                "ENI.MI",
-                                "EONG.DE",
-                                "ESSI.PA",
-                                "GASI.MI",
-                                "GSZ.PA",
-                                "IBE.MC",
-                                "ING.AS",
-                                "INTB.BR",
-                                "ISPA.AS",
-                                "ISP.MI",
-                                "LVMH.PA",
-                                "MUVGn.DE",
-                                "NOK1V.HE",
-                                "ORAN.PA",
-                                "OREP.PA",
-                                "PHG.AS",
-                                "REP.MC",
-                                "RWEG.DE",
-                                "SAN.MC",
-                                "SAPG.DE",
-                                "SASY.PA",
-                                "SCHN.PA",
-                                "SGEF.PA",
-                                "SGOB.PA",
-                                "SIEGn.DE",
-                                "SOGN.PA",
-                                "TEF.MC",
-                                "TLIT.MI",
-                                "TOTF.PA",
-                                "ULVR.L",
-                                "UNc.AS",
-                                "VIV.PA",
-                                "VOWG.DE"
-))
+symbols = c(
+            #"AEGN.AS", 
+            #"AIRP.PA", 
+            #"ALSO.PA", 
+            #"ALVG.DE", 
+            #"AXAF.PA", skipped
+            #"BASF.DE",
+            #"BAYG.DE",
+            #"BBVA.MC",
+            #"BNPP.PA",
+            #"CAGR.PA", skipped
+            #"CARR.PA",
+            #"CRDI.MI", skipped
+            #"CRH.I",
+            #"DANO.PA",
+            #"DB1Gn.DE",
+            #"DBKGn.DE",
+            #"DCXGn.DE",
+            #"DTEGn.DE",
+            #"ENEI.M", empty
+            #"ENI.MI",
+            #"EONG.DE",
+            #"ESSI.PA", 
+            #"GASI.MI",???
+            #"GSZ.PA",
+            #"IBE.MC",
+            #"ING.AS", skipped
+            #"INTB.BR", ??
+            #"ISPA.AS", skipped
+            #"ISP.MI",
+            #"LVMH.PA",
+            #"MUVGn.DE", ??
+            #"NOK1V.HE",
+            #"ORAN.PA",
+            #"OREP.PA",
+            "PHG.AS"
+            #"REP.MC", ok
+            #"RWEG.DE", ok
+            #"SAN.MC", skipped
+            #"SAPG.DE", ok
+            #"SASY.PA", skipped
+            #"SCHN.PA", skipped
+            #"SGEF.PA", skipped
+            #"SGOB.PA", skipped
+            #"SIEGn.DE", ok
+            #"SOGN.PA", skipped
+            #"TEF.MC", ok
+            #"TLIT.MI", ok
+            #"TOTF.PA", skipped
+            #"ULVR.L", ok
+            #"UNc.AS", ok
+            #"VIV.PA", ok
+            #"VOWG.DE" ok
+)
 
 # Set defaults
 #setSymbolLookup.FI(storage_method = "rda",
@@ -160,7 +162,7 @@ loadSymbolForRange <- function(symbol # : String
     from = from,
     to = to,
     src = "FI",
-    dir = file.path("/datascience/marketdata/storage/tick"),
+    dir = file.path(paste(STORAGE_ROOT, "/tick", sep="")),
     etension = "RData",
     env = symbolEnv,
     auto.assign = TRUE,
@@ -238,7 +240,12 @@ determineMissingDays <- function(symbol, from, to) {
   symbolData = get(symbol, symbolEnv)
   
   daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
-  daysTraded <- unique(floor_date(index(symbolData), "day"))
+  if(class(symbolData) == c("xts", "zoo")) {
+    daysTraded <- unique(floor_date(index(symbolData), "day"))
+    
+  } else {
+    daysTraded <- NA
+  }
   
   daysDiff <- as.data.frame(dplyr::setdiff(daysRange, daysTraded))
   colnames(daysDiff) <- c("date")
@@ -255,13 +262,15 @@ determineMissingDays <- function(symbol, from, to) {
     filter(is.na(isHoliday)) %>%
     select(date, wday)
   
-  cat(paste("\nDays traded:", nrow(daysTraded), "days missing:", nrow(daysDiff)))
-  
   #  if(is.null(symbolEnv$missingDays)) {
   #    symbolEnv$missingDays = 0
   #  }
   
   if(nrow(daysDiff) != 0) {
+    cat(paste("\nSymbol:", symbol, 
+              "(current)Missing days:", nrow(symbolEnv$missingDays), 
+              ", days traded:", nrow(daysTraded), 
+              ", (+)days missing:", nrow(daysDiff)))
     symbolEnv$missingDays = rbind(symbolEnv$missingDays, daysDiff)
   }
 }
@@ -289,6 +298,11 @@ printStats <- function(symbol, extended = FALSE) {
   if(extended && Config_MissingDays) {
     cat(paste("\nMissing days :", getSymbol_MissingsDays(symbol)[,1], "\n")) 
     cat("------------------------------")
+
+    fileName <- paste(STORAGE_ROOT, "/out/MissingDays_", symbol, ".txt", sep="")
+    cat(paste("\nMissing days for ", symbol, "\n"),  file = fileName, append = FALSE)
+    #cat(getSymbol_MissingsDays(symbol)[,1], file = fileName, append = TRUE)
+    lapply(getSymbol_MissingsDays(symbol)[,1], function(x) cat(paste(toString(x), "\n"), file = fileName, append = TRUE))
   }
 }
 
@@ -417,6 +431,27 @@ loadSymbol <- function(symbol) {
 }
 
 ###################################################################
+# Expand the tick data archive for symbol
+###################################################################
+expandSymbolTickDataArchive <- function(symbol) {
+
+  cmd <- paste("bash expandSymbolTickDataArchive.sh ", symbol)
+  
+  system(cmd)
+  symbol
+}
+
+###################################################################
+# Expand the tick data archive for symbol
+###################################################################
+purgeSymbolTickData <- function(symbol) {
+
+  cmd <- paste("bash purgeSymbolTickData.sh ", symbol)
+  
+  system(cmd)
+}
+
+###################################################################
 # Main program
 ###################################################################
 
@@ -429,16 +464,34 @@ Sys.setenv(TZ="GMT")
 #symbol <- "ALSO.PA" # all
 #symbol <- "AXAF.PA" # all
 
-symbol <- "ORAN.PA"
+#symbol <- "ORAN.PA"
 
-loadSymbol(symbol)
+#loadSymbol(symbol)
 
-cat("\n----------------------\n")
-cat("\nExtensive statistics.\n")
+#cat("\n----------------------\n")
+#cat("\nExtensive statistics.\n")
 
-printStats(symbol, TRUE)
+#printStats(symbol, TRUE)
 
-drawChart(toMinuteBars(symbol, 1440))
+#drawChart(toMinuteBars(symbol, 1440))
+
+for(symbol in symbols) {
+  
+  expandSymbolTickDataArchive(symbol)
+
+  loadSymbol(symbol)
+  
+  purgeSymbolTickData(symbol)
+
+  cat("\n----------------------\n")
+  cat("\nExtensive statistics.\n")
+  
+  printStats(symbol, TRUE)
+  
+  #drawChart(toMinuteBars(symbol, 1440))
+  
+}
+
 
 ###################################################################
 # googleVis charts

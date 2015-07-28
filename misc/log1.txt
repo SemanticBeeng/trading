@@ -1,0 +1,304 @@
+Expanding archive for symbol TEF.MC ...
+/datascience/marketdata /datascience/projects/trading/misc
+Renaming data files ...
+/datascience/marketdata/storage/tick/TEF.MC /datascience/marketdata /datascience/projects/trading/misc
+/datascience/marketdata /datascience/projects/trading/misc
+/datascience/projects/trading/misc
+
+Loading symbol TEF.MC for range 2000-01-01 : 2000-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days:  , days traded:  , (+)days missing: 5
+Symbol TEF.MC has 5084587 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2001-01-01 : 2001-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 5 , days traded:  , (+)days missing: 7
+Symbol TEF.MC has 4026137 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2002-01-01 : 2002-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 12 , days traded:  , (+)days missing: 7
+Symbol TEF.MC has 4225725 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2003-01-01 : 2003-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 19 , days traded:  , (+)days missing: 6
+Symbol TEF.MC has 6866758 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2004-01-01 : 2004-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 25 , days traded:  , (+)days missing: 7
+Symbol TEF.MC has 3191526 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2005-01-01 : 2005-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 32 , days traded:  , (+)days missing: 1
+Symbol TEF.MC has 3415862 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2006-01-01 : 2006-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 33 , days traded:  , (+)days missing: 1
+Symbol TEF.MC has 3778347 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2007-01-01 : 2007-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 34 , days traded:  , (+)days missing: 1
+Symbol TEF.MC has 5488243 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2008-01-01 : 2008-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 35 , days traded:  , (+)days missing: 1
+Symbol TEF.MC has 7795141 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2009-01-01 : 2009-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 36 , days traded:  , (+)days missing: 1
+Symbol TEF.MC has 8131468 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2010-01-01 : 2010-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 37 , days traded:  , (+)days missing: 1
+Symbol TEF.MC has 11528828 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2011-01-01 : 2011-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol TEF.MC has 22043100 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2012-01-01 : 2012-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol: TEF.MC (current)Missing days: 38 , days traded:  , (+)days missing: 18
+Symbol TEF.MC has 17667617 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2013-01-01 : 2013-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol TEF.MC has 15101272 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2014-01-01 : 2014-12-31 ...
+Done loading.
+
+Calculating missing days...
+Symbol TEF.MC has 21907301 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Loading symbol TEF.MC for range 2015-01-01 : 2015-07-08 ...
+Done loading.
+
+Calculating missing days...
+Symbol TEF.MC has 17808152 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSEPurging tick data files ...
+/datascience/marketdata/storage/tick/TEF.MC /datascience/projects/trading/misc
+/datascience/projects/trading/misc
+
+----------------------
+
+Extensive statistics.
+
+Symbol TEF.MC has 17808152 rows :
+------------------------------
+
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE 
+ has.Vo TRUE has.Ask TRUE has.Bid TRUE has.HLC FALSE
+Missing days : 2000-01-06 
+ 
+Missing days : 2000-10-12 
+ 
+Missing days : 2000-11-01 
+ 
+Missing days : 2000-12-06 
+ 
+Missing days : 2000-12-08 
+ 
+Missing days : 2001-03-08 
+ 
+Missing days : 2001-03-21 
+ 
+Missing days : 2001-08-15 
+ 
+Missing days : 2001-09-10 
+ 
+Missing days : 2001-10-12 
+ 
+Missing days : 2001-12-06 
+ 
+Missing days : 2001-12-24 
+ 
+Missing days : 2002-01-28 
+ 
+Missing days : 2002-08-15 
+ 
+Missing days : 2002-08-16 
+ 
+Missing days : 2002-09-10 
+ 
+Missing days : 2002-11-01 
+ 
+Missing days : 2002-12-06 
+ 
+Missing days : 2002-12-24 
+ 
+Missing days : 2003-01-06 
+ 
+Missing days : 2003-01-17 
+ 
+Missing days : 2003-08-15 
+ 
+Missing days : 2003-10-16 
+ 
+Missing days : 2003-12-08 
+ 
+Missing days : 2003-12-24 
+ 
+Missing days : 2004-01-06 
+ 
+Missing days : 2004-08-16 
+ 
+Missing days : 2004-10-12 
+ 
+Missing days : 2004-11-01 
+ 
+Missing days : 2004-12-06 
+ 
+Missing days : 2004-12-08 
+ 
+Missing days : 2004-12-24 
+ 
+Missing days : 2005-01-06 
+ 
+Missing days : 2006-01-06 
+ 
+Missing days : 2007-12-24 
+ 
+Missing days : 2008-12-24 
+ 
+Missing days : 2009-12-24 
+ 
+Missing days : 2010-12-24 
+ 
+Missing days : 2012-12-03 
+ 
+Missing days : 2012-12-04 
+ 
+Missing days : 2012-12-05 
+ 
+Missing days : 2012-12-06 
+ 
+Missing days : 2012-12-07 
+ 
+Missing days : 2012-12-10 
+ 
+Missing days : 2012-12-11 
+ 
+Missing days : 2012-12-12 
+ 
+Missing days : 2012-12-13 
+ 
+Missing days : 2012-12-14 
+ 
+Missing days : 2012-12-17 
+ 
+Missing days : 2012-12-18 
+ 
+Missing days : 2012-12-19 
+ 
+Missing days : 2012-12-20 
+ 
+Missing days : 2012-12-21 
+ 
+Missing days : 2012-12-24 
+ 
+Missing days : 2012-12-27 
+ 
+Missing days : 2012-12-28 
+------------------------------
