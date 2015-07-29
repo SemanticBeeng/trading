@@ -14,9 +14,8 @@ require(FinancialInstrument)
 require(dplyr)
 require(lubridate)
 require(chron)
-
-Config_MissingDays <- TRUE
-Config_AggregateBars <- FALSE #TRUE
+library(pryr)
+library(lineprof)
 
 STORAGE_ROOT = "/datascience/marketdata/storage"
 YEAR_COUNT <- 15
@@ -49,14 +48,14 @@ symbols = c(
             #"IBE.MC",
             #"ING.AS", skipped
             #"INTB.BR", ??
-            #"ISPA.AS", skipped
-            #"ISP.MI",
-            #"LVMH.PA",
-            #"MUVGn.DE", ??
-            #"NOK1V.HE",
-            #"ORAN.PA",
-            #"OREP.PA",
-            "PHG.AS"
+            "ISPA.AS"
+            #"ISP.MI", ok
+            #"LVMH.PA", ok
+            #"MUVGn.DE", ok
+            #"NOK1V.HE", ok
+            #"ORAN.PA", ok
+            #"OREP.PA", ok
+            #"PHG.AS", ok
             #"REP.MC", ok
             #"RWEG.DE", ok
             #"SAN.MC", skipped
@@ -154,10 +153,13 @@ loadSymbolForRange <- function(symbol # : String
   # http://databasefaq.com/index.php/answer/235383/r-error-handling-xts-lapply-quantmod-have-lapply-continue-even-after-encountering-an-error-using-getsymbols-from-quantmod-duplicate
   cat(paste("\nLoading symbol", symbol, "for range", from, ":", to, "..."))
   
+  object_size(globalenv())
+  removeSymbols(symbol, globalenv())
+  
   symbolEnv <- getSymbol_Env(symbol)
   
   # 1) Load symbol data
-  result <- try(getSymbols(
+  mc <- mem_change(result <- try(getSymbols(
     symbol,
     from = from,
     to = to,
@@ -166,12 +168,14 @@ loadSymbolForRange <- function(symbol # : String
     etension = "RData",
     env = symbolEnv,
     auto.assign = TRUE,
-    verbose = FALSE))
+    verbose = FALSE)))
   
-  cat("\nDone loading.\n")
+  cat(paste("\nDone loading; mem_change = ", mc, ".\n"))
 
   # ... now available here
   symbolData = get(symbol, symbolEnv)
+  
+  cat(paste("Symbol data object size: ", object_size(symbolData)))
   
   # 2) Determine days missing data
   if(Config_MissingDays) {
@@ -389,7 +393,7 @@ loadSymbol <- function(symbol) {
   # http://stackoverflow.com/questions/15059076/r-how-to-call-apply-like-function-on-each-row-of-dataframe-with-multiple-argum
   # http://stackoverflow.com/questions/16714020/loop-through-data-frame-and-variable-names
   # 
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1])
+  prof1 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1]))
   loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
@@ -399,12 +403,14 @@ loadSymbol <- function(symbol) {
   loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13])
+  prof11 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11]))
+  prof12 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12]))
+  prof13 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13]))
   loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
   loadSymbolForRange(symbol = symbol, from = dRanges$from[16], to = dRanges$to[16])
+
+  #shine(prof1)
   
 #  lapply(dRanges, FUN = function (dr) { 
 #      #print(class(dr[2]))
@@ -454,6 +460,11 @@ purgeSymbolTickData <- function(symbol) {
 ###################################################################
 # Main program
 ###################################################################
+
+Config_MissingDays <- TRUE
+Config_AggregateBars <- FALSE #TRUE
+
+gcinfo(TRUE)
 
 # http://stackoverflow.com/questions/11890600/time-zone-period-apply-in-xts-using-r
 Sys.setenv(TZ="GMT")
