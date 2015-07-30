@@ -21,34 +21,34 @@ STORAGE_ROOT = "/datascience/marketdata/storage"
 YEAR_COUNT <- 15
 
 symbols = c(
-            #"AEGN.AS", 
-            #"AIRP.PA", 
-            #"ALSO.PA", 
-            #"ALVG.DE", 
-            #"AXAF.PA", skipped
-            #"BASF.DE",
-            #"BAYG.DE",
-            #"BBVA.MC",
-            #"BNPP.PA",
+            #"AEGN.AS", ok
+            #"AIRP.PA", ok
+            #"ALSO.PA", ok
+            #"ALVG.DE", ok
+            #"AXAF.PA", ok
+            #"BASF.DE", ok
+            #"BAYG.DE", ok
+            #"BBVA.MC", ok
+            "BNPP.PA"
             #"CAGR.PA", skipped
-            #"CARR.PA",
+            #"CARR.PA", ok
             #"CRDI.MI", skipped
-            #"CRH.I",
-            #"DANO.PA",
-            #"DB1Gn.DE",
-            #"DBKGn.DE",
-            #"DCXGn.DE",
-            #"DTEGn.DE",
+            #"CRH.I", ok
+            #"DANO.PA", ok
+            #"DB1Gn.DE", ok
+            #"DBKGn.DE", ok
+            #"DCXGn.DE", ok
+            #"DTEGn.DE", ok
             #"ENEI.M", empty
-            #"ENI.MI",
-            #"EONG.DE",
-            #"ESSI.PA", 
-            #"GASI.MI",???
-            #"GSZ.PA",
-            #"IBE.MC",
+            #"ENI.MI", ok
+            #"EONG.DE", ok
+            #"ESSI.PA", ok
+            #"GASI.MI", ok
+            #"GSZ.PA", ok
+            #"IBE.MC", ok
             #"ING.AS", skipped
-            #"INTB.BR", ??
-            "ISPA.AS"
+            #"INTB.BR", ok
+            #"ISPA.AS", ok!
             #"ISP.MI", ok
             #"LVMH.PA", ok
             #"MUVGn.DE", ok
@@ -63,7 +63,7 @@ symbols = c(
             #"SASY.PA", skipped
             #"SCHN.PA", skipped
             #"SGEF.PA", skipped
-            #"SGOB.PA", skipped
+            #"SGOB.PA", skipped 
             #"SIEGn.DE", ok
             #"SOGN.PA", skipped
             #"TEF.MC", ok
@@ -154,7 +154,7 @@ loadSymbolForRange <- function(symbol # : String
   cat(paste("\nLoading symbol", symbol, "for range", from, ":", to, "..."))
   
   object_size(globalenv())
-  removeSymbols(symbol, globalenv())
+  removeSymbols(NULL, globalenv())
   
   symbolEnv <- getSymbol_Env(symbol)
   
@@ -394,21 +394,21 @@ loadSymbol <- function(symbol) {
   # http://stackoverflow.com/questions/16714020/loop-through-data-frame-and-variable-names
   # 
   prof1 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1]))
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10])
+  prof2 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2]))
+  prof3 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3]))
+  prof4 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4]))
+  prof5 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5]))
+  prof6 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6]))
+  prof7 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7]))
+  prof8 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8]))
+  prof9 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9]))
+  prof10 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10]))
   prof11 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11]))
   prof12 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12]))
   prof13 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13]))
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15])
-  loadSymbolForRange(symbol = symbol, from = dRanges$from[16], to = dRanges$to[16])
+  prof14 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14]))
+  prof15 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15]))
+  prof16 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[16], to = dRanges$to[16]))
 
   #shine(prof1)
   
