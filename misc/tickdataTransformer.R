@@ -461,7 +461,7 @@ purgeSymbolTickData <- function(symbol) {
 # Main program
 ###################################################################
 
-Config_MissingDays <- TRUE
+Config_MissingDays <- FALSE
 Config_AggregateBars <- FALSE #TRUE
 
 gcinfo(TRUE)
