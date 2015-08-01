@@ -111,11 +111,16 @@ dateRanges <- function() {
 
 ###################################################################
 # Get symbol data
+# http://adv-r.had.co.nz/Exceptions-Debugging.html#condition-handling
 ###################################################################
 getSymbol_Data <- function(symbol) {
 
-  symbolEnv <- get(symbol, globalenv())
-  get(symbol, symbolEnv)  
+  tryCatch({ 
+    symbolEnv <- get(symbol, globalenv())
+    get(symbol, symbolEnv)  
+  }, 
+  error = function(e) NULL)
+  
 }
 
 ###################################################################
@@ -154,7 +159,9 @@ loadSymbolForRange <- function(symbol # : String
   cat(paste("\nLoading symbol", symbol, "for range", from, ":", to, "..."))
   
   object_size(globalenv())
-  removeSymbols(NULL, globalenv())
+  #removeSymbols(NULL, globalenv())
+  symbolData = getSymbol_Data(symbol)
+  rm(symbolData)
   
   symbolEnv <- getSymbol_Env(symbol)
   
