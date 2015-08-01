@@ -9,9 +9,11 @@
 #suppressPackageStartupMessages(
   #require(googleVis)
 #)
+require(stringr)
 require(quantmod)
 require(FinancialInstrument)
 require(dplyr)
+require(reshape2)
 require(lubridate)
 require(chron)
 library(pryr)
@@ -29,10 +31,10 @@ symbols = c(
             #"BASF.DE", ok
             #"BAYG.DE", ok
             #"BBVA.MC", ok
-            "BNPP.PA"
-            #"CAGR.PA", skipped
+            #"BNPP.PA", #skipped
+            "CAGR.PA", #skipped
             #"CARR.PA", ok
-            #"CRDI.MI", skipped
+            "CRDI.MI", #skipped
             #"CRH.I", ok
             #"DANO.PA", ok
             #"DB1Gn.DE", ok
@@ -46,7 +48,7 @@ symbols = c(
             #"GASI.MI", ok
             #"GSZ.PA", ok
             #"IBE.MC", ok
-            #"ING.AS", skipped
+            "ING.AS", #skipped
             #"INTB.BR", ok
             #"ISPA.AS", ok!
             #"ISP.MI", ok
@@ -58,17 +60,17 @@ symbols = c(
             #"PHG.AS", ok
             #"REP.MC", ok
             #"RWEG.DE", ok
-            #"SAN.MC", skipped
+            "SAN.MC", #skipped
             #"SAPG.DE", ok
-            #"SASY.PA", skipped
-            #"SCHN.PA", skipped
-            #"SGEF.PA", skipped
-            #"SGOB.PA", skipped 
+            "SASY.PA", #skipped
+            "SCHN.PA", #skipped
+            "SGEF.PA", #skipped
+            "SGOB.PA", #skipped
             #"SIEGn.DE", ok
-            #"SOGN.PA", skipped
+            "SOGN.PA", #skipped
             #"TEF.MC", ok
             #"TLIT.MI", ok
-            #"TOTF.PA", skipped
+            "TOTF.PA" #skipped
             #"ULVR.L", ok
             #"UNc.AS", ok
             #"VIV.PA", ok
@@ -93,27 +95,36 @@ newPOSIXct <- function(d) {
 # https://stat.ethz.ch/pipermail/r-help//2013-April/352482.html
 # http://stackoverflow.com/questions/11561856/add-new-row-to-dataframe
 # http://stackoverflow.com/questions/20689650/how-to-append-rows-to-an-r-data-frame
+# http://stackoverflow.com/questions/7929668/efficiently-create-a-matrix-from-function-values
+# http://stackoverflow.com/questions/24936330/adding-multiple-columns-in-a-dplyr-mutate-call
 ###################################################################
-dateRanges <- function() {
-
-  dummyDate <- newPOSIXct('1900-01-01')
-
-  df <- data.frame(ym = 0 : ((YEAR_COUNT - 1) * 12 + 8), from = NA, to = NA, stringsAsFactors = FALSE)
+dateRanges <- function () {
   
-  r <- 1
-  for(y in 0 : YEAR_COUNT) {
-    for(m in 0 : 11) {
-
-      #from <- ymd(paste(2000 + y, m, "1", sep="-"), tz = "GMT")
-      #to   <- floor_date(ymd(paste(2000 + y, m + 1, "1", sep="-"), tz = "GMT") - 1, "day")
-      #cat(paste("y", y, "m", m, "r", r, "\n"))
-      
-      df$from[r] <- ymd(paste(2000 + y, m, "1", sep="-"), tz = "GMT")
-      df$to[r]   <- floor_date(ymd(paste(2000 + y, m + 1, "1", sep="-"), tz = "GMT") - 1, "day")
-      r <- r+1
-    }
+  years  <- 0:15
+  months <- 1:12
+  
+  concatFromTo <- function(y, m) {
+    paste(
+      ymd(paste(2000 + y, m, "1", sep="-"), tz = "GMT"),
+      floor_date(ymd(paste(2000 + y, m + 1, "1", sep="-"), tz = "GMT") - 1, "day"),
+      sep=":"
+    )
   }
-
+  
+  df <- as.data.frame((as.vector(t(outer(years, months, concatFromTo)))))
+  colnames(df) <- c("fromToStr")
+  
+  df <- df %>% 
+    do(cbind(., data.frame(fromTo = str_split_fixed(.$fromToStr, ":", 2)))) %>% 
+    mutate(from = newPOSIXct(fromTo.1)) %>% 
+    mutate(to = newPOSIXct(fromTo.2)) %>% 
+    select(from, to)
+  
+  # Truncate and adjust the end
+  df <- df %>% 
+    filter(from < newPOSIXct("2015-09-01")) 
+  
+  df$to[nrow(df)] = newPOSIXct("2015-08-07")
   df
 }
 
@@ -303,11 +314,11 @@ printStats <- function(symbol, extended = FALSE) {
   
   cat(paste("\nSymbol" , symbol, "has", nrow(symbolData), "rows :\n------------------------------\n"))
 
-  cat(paste("\n",
-            "has.Vo", has.Vo(symbolData), 
-            "has.Ask", has.Ask(symbolData),
-            "has.Bid", has.Bid(symbolData),
-            "has.HLC", has.HLC(symbolData)))
+  #cat(paste("\n",
+  #          "has.Vo", has.Vo(symbolData), 
+  #          "has.Ask", has.Ask(symbolData),
+  #          "has.Bid", has.Bid(symbolData),
+  #          "has.HLC", has.HLC(symbolData)))
         
   #p <- periodicity(symbolData)
   #unclass(p)
@@ -408,22 +419,27 @@ loadSymbol <- function(symbol) {
   # http://stackoverflow.com/questions/15059076/r-how-to-call-apply-like-function-on-each-row-of-dataframe-with-multiple-argum
   # http://stackoverflow.com/questions/16714020/loop-through-data-frame-and-variable-names
   # 
-  prof1 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1]))
-  prof2 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2]))
-  prof3 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3]))
-  prof4 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4]))
-  prof5 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5]))
-  prof6 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6]))
-  prof7 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7]))
-  prof8 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8]))
-  prof9 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9]))
-  prof10 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10]))
-  prof11 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11]))
-  prof12 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12]))
-  prof13 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13]))
-  prof14 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14]))
-  prof15 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15]))
-  prof16 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[16], to = dRanges$to[16]))
+  dRangeCount <- nrow(dRanges)
+  for(r in 1:dRangeCount) {
+    loadSymbolForRange(symbol = symbol, from = dRanges$from[r], to = dRanges$to[r])
+    
+  }
+#  prof1 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[1], to = dRanges$to[1]))
+#  prof2 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[2], to = dRanges$to[2]))
+#  prof3 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[3], to = dRanges$to[3]))
+#  prof4 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[4], to = dRanges$to[4]))
+#  prof5 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[5], to = dRanges$to[5]))
+#  prof6 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[6], to = dRanges$to[6]))
+#  prof7 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[7], to = dRanges$to[7]))
+#  prof8 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[8], to = dRanges$to[8]))
+#  prof9 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[9], to = dRanges$to[9]))
+#  prof10 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[10], to = dRanges$to[10]))
+#  prof11 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[11], to = dRanges$to[11]))
+#  prof12 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[12], to = dRanges$to[12]))
+#  prof13 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[13], to = dRanges$to[13]))
+#  prof14 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[14], to = dRanges$to[14]))
+#  prof15 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[15], to = dRanges$to[15]))
+#  prof16 <- lineprof(loadSymbolForRange(symbol = symbol, from = dRanges$from[16], to = dRanges$to[16]))
 
   #shine(prof1)
   
@@ -476,10 +492,10 @@ purgeSymbolTickData <- function(symbol) {
 # Main program
 ###################################################################
 
-Config_MissingDays <- FALSE
+Config_MissingDays <- TRUE
 Config_AggregateBars <- FALSE #TRUE
 
-gcinfo(TRUE)
+#gcinfo(TRUE)
 
 # http://stackoverflow.com/questions/11890600/time-zone-period-apply-in-xts-using-r
 Sys.setenv(TZ="GMT")
@@ -505,13 +521,12 @@ for(symbol in symbols) {
   
   expandSymbolTickDataArchive(symbol)
 
+  cat("\n#####################################################\n")
   loadSymbol(symbol)
   
   purgeSymbolTickData(symbol)
 
-  cat("\n----------------------\n")
   cat("\nExtensive statistics.\n")
-  
   printStats(symbol, TRUE)
   
   #drawChart(toMinuteBars(symbol, 1440))
