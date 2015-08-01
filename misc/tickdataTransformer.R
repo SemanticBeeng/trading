@@ -18,7 +18,7 @@ library(pryr)
 library(lineprof)
 
 STORAGE_ROOT = "/datascience/marketdata/storage"
-YEAR_COUNT <- 15
+YEAR_COUNT <- 16
 
 symbols = c(
             #"AEGN.AS", ok
@@ -75,6 +75,11 @@ symbols = c(
             #"VOWG.DE" ok
 )
 
+###################################################################
+newPOSIXct <- function(d) {
+  as.POSIXct(d, tz='GMT', origin="1970-01-01")
+}
+
 # Set defaults
 #setSymbolLookup.FI(storage_method = "rda",
 #                   Symbols = c(symbol),
@@ -91,21 +96,24 @@ symbols = c(
 ###################################################################
 dateRanges <- function() {
 
-  dummyDate <- as.POSIXct('1900-01-01', tz = "GMT", origin="1970-01-01")
+  dummyDate <- newPOSIXct('1900-01-01')
 
-  df <- data.frame(y = 0:YEAR_COUNT, from = dummyDate, to = dummyDate, stringsAsFactors = FALSE)
+  df <- data.frame(ym = 0 : ((YEAR_COUNT - 1) * 12 + 8), from = NA, to = NA, stringsAsFactors = FALSE)
   
-  for(y in 0:YEAR_COUNT) {
-  
-    year <- 2000 + y
-    daysInYear <- if(leap_year(year)) 366 else 365
-    from <- as.POSIXct(paste(year, '-01-01', sep = ""), tz = "GMT", origin="1970-01-01")
-    df$from[y+1] <- from
-    df$to[y+1] <- floor_date(from + daysInYear * 86400 - 1, "day")
+  r <- 1
+  for(y in 0 : YEAR_COUNT) {
+    for(m in 0 : 11) {
+
+      #from <- ymd(paste(2000 + y, m, "1", sep="-"), tz = "GMT")
+      #to   <- floor_date(ymd(paste(2000 + y, m + 1, "1", sep="-"), tz = "GMT") - 1, "day")
+      #cat(paste("y", y, "m", m, "r", r, "\n"))
+      
+      df$from[r] <- ymd(paste(2000 + y, m, "1", sep="-"), tz = "GMT")
+      df$to[r]   <- floor_date(ymd(paste(2000 + y, m + 1, "1", sep="-"), tz = "GMT") - 1, "day")
+      r <- r+1
+    }
   }
 
-  df$from[YEAR_COUNT + 1] <- as.POSIXct(paste(2000 + YEAR_COUNT, '-01-01', sep = ""), tz = "GMT", origin="1970-01-01")
-  df$to[YEAR_COUNT + 1] <- as.POSIXct(paste(2000 + YEAR_COUNT, '-07-08', sep = ""), tz = "GMT", origin="1970-01-01")
   df
 }
 
@@ -265,7 +273,7 @@ determineMissingDays <- function(symbol, from, to) {
   # http://stackoverflow.com/questions/9216138/find-the-day-of-a-week-in-r
   # http://stackoverflow.com/questions/2792819/r-dates-origin-must-be-supplied
   daysDiff <- daysDiff %>% 
-    transmute(date = as.POSIXct(daysDiff$date, tz='GMT', origin="1970-01-01")) %>%
+    transmute(date = newPOSIXct(daysDiff$date)) %>%
     mutate(wday = wday(date)) %>% 
     mutate(isHoliday = isHoliday(date)) %>% 
     filter(wday(date) != 7) %>% 
