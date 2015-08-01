@@ -31,10 +31,10 @@ symbols = c(
             #"BASF.DE", ok
             #"BAYG.DE", ok
             #"BBVA.MC", ok
-            #"BNPP.PA", #skipped
-            "CAGR.PA", #skipped
+            "BNPP.PA" #skipped
+            #"CAGR.PA", #skipped
             #"CARR.PA", ok
-            "CRDI.MI", #skipped
+            #"CRDI.MI", #skipped
             #"CRH.I", ok
             #"DANO.PA", ok
             #"DB1Gn.DE", ok
@@ -48,7 +48,7 @@ symbols = c(
             #"GASI.MI", ok
             #"GSZ.PA", ok
             #"IBE.MC", ok
-            "ING.AS", #skipped
+            #"ING.AS", #skipped
             #"INTB.BR", ok
             #"ISPA.AS", ok!
             #"ISP.MI", ok
@@ -60,17 +60,17 @@ symbols = c(
             #"PHG.AS", ok
             #"REP.MC", ok
             #"RWEG.DE", ok
-            "SAN.MC", #skipped
+            #"SAN.MC", #skipped
             #"SAPG.DE", ok
-            "SASY.PA", #skipped
-            "SCHN.PA", #skipped
-            "SGEF.PA", #skipped
-            "SGOB.PA", #skipped
+            #"SASY.PA", #skipped
+            #"SCHN.PA", #skipped
+            #"SGEF.PA", #skipped
+            #"SGOB.PA", #skipped
             #"SIEGn.DE", ok
-            "SOGN.PA", #skipped
+            #"SOGN.PA", #skipped
             #"TEF.MC", ok
             #"TLIT.MI", ok
-            "TOTF.PA" #skipped
+            #"TOTF.PA", #skipped
             #"ULVR.L", ok
             #"UNc.AS", ok
             #"VIV.PA", ok
@@ -270,8 +270,13 @@ determineMissingDays <- function(symbol, from, to) {
   symbolData = get(symbol, symbolEnv)
   
   daysRange <- seq.POSIXt(from = from, to = to, by = 'day')
-  if(class(symbolData) == c("xts", "zoo")) {
-    daysTraded <- unique(floor_date(index(symbolData), "day"))
+  if(is.xts(symbolData)) {
+    ndx <- index(symbolData)
+    ep <- endpoints(symbolData, on="days")
+    
+    tmp <- unlist(lapply(ep, function(e) floor_date(ndx[e], "day")), recursive = FALSE)
+    daysTraded <- as.POSIXct(tmp, origin = "1970-01-01")
+    #daysTraded <- unique(floor_date(index(symbolData), "day"))
     
   } else {
     daysTraded <- NA
