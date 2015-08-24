@@ -23,58 +23,58 @@ STORAGE_ROOT = "/datascience/marketdata/storage"
 YEAR_COUNT <- 16
 
 symbols = c(
-            #"AEGN.AS", ok
-            #"AIRP.PA", ok
-            #"ALSO.PA", ok
-            #"ALVG.DE", ok
-            #"AXAF.PA", ok
-            #"BASF.DE", ok
-            #"BAYG.DE", ok
-            #"BBVA.MC", ok
-            "BNPP.PA" #skipped
-            #"CAGR.PA", #skipped
-            #"CARR.PA", ok
-            #"CRDI.MI", #skipped
-            #"CRH.I", ok
-            #"DANO.PA", ok
-            #"DB1Gn.DE", ok
-            #"DBKGn.DE", ok
-            #"DCXGn.DE", ok
-            #"DTEGn.DE", ok
+            "AEGN.AS", #ok
+            "AIRP.PA", #ok
+            "ALSO.PA", #ok
+            "ALVG.DE", #ok
+            "AXAF.PA", #ok
+            "BASF.DE", #ok
+            "BAYG.DE", #ok
+            "BBVA.MC", #ok
+            "BNPP.PA", #skipped
+            "CAGR.PA", #skipped
+            "CARR.PA", #ok
+            "CRDI.MI", #skipped
+            "CRH.I", #ok
+            "DANO.PA", #ok
+            "DB1Gn.DE", #ok
+            "DBKGn.DE", #ok
+            "DCXGn.DE", #ok
+            "DTEGn.DE", #ok
             #"ENEI.M", empty
-            #"ENI.MI", ok
-            #"EONG.DE", ok
-            #"ESSI.PA", ok
-            #"GASI.MI", ok
-            #"GSZ.PA", ok
-            #"IBE.MC", ok
-            #"ING.AS", #skipped
-            #"INTB.BR", ok
-            #"ISPA.AS", ok!
-            #"ISP.MI", ok
-            #"LVMH.PA", ok
-            #"MUVGn.DE", ok
-            #"NOK1V.HE", ok
-            #"ORAN.PA", ok
-            #"OREP.PA", ok
-            #"PHG.AS", ok
-            #"REP.MC", ok
-            #"RWEG.DE", ok
-            #"SAN.MC", #skipped
-            #"SAPG.DE", ok
-            #"SASY.PA", #skipped
-            #"SCHN.PA", #skipped
-            #"SGEF.PA", #skipped
-            #"SGOB.PA", #skipped
-            #"SIEGn.DE", ok
-            #"SOGN.PA", #skipped
-            #"TEF.MC", ok
-            #"TLIT.MI", ok
-            #"TOTF.PA", #skipped
-            #"ULVR.L", ok
-            #"UNc.AS", ok
-            #"VIV.PA", ok
-            #"VOWG.DE" ok
+            "ENI.MI", #ok
+            "EONG.DE", #ok
+            "ESSI.PA", #ok
+            "GASI.MI", #ok
+            "GSZ.PA", #ok
+            "IBE.MC", #ok
+            "ING.AS", #skipped
+            "INTB.BR", #ok
+            "ISPA.AS", #ok
+            "ISP.MI", #ok
+            "LVMH.PA", #ok
+            "MUVGn.DE", #ok
+            "NOK1V.HE", #ok
+            "ORAN.PA", #ok
+            "OREP.PA", #ok
+            "PHG.AS", #ok
+            "REP.MC", #ok
+            "RWEG.DE", #ok
+            "SAN.MC", #skipped
+            "SAPG.DE", #ok
+            "SASY.PA", #skipped
+            "SCHN.PA", #skipped
+            "SGEF.PA", #skipped
+            "SGOB.PA", #skipped
+            "SIEGn.DE", #ok
+            "SOGN.PA", #skipped
+            "TEF.MC", #ok
+            "TLIT.MI", #ok
+            "TOTF.PA", #skipped
+            "ULVR.L", #ok
+            "UNc.AS", #ok
+            "VIV.PA", #ok
+            "VOWG.DE" #ok
 )
 
 ###################################################################
@@ -122,9 +122,9 @@ dateRanges <- function () {
   
   # Truncate and adjust the end
   df <- df %>% 
-    filter(from < newPOSIXct("2015-09-01")) 
+    filter(from < newPOSIXct("2015-08-01")) 
   
-  df$to[nrow(df)] = newPOSIXct("2015-08-07")
+  df$to[nrow(df)] = newPOSIXct("2015-07-08")
   df
 }
 
